@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/potooio/potoo/actions/workflows/ci.yml/badge.svg)](https://github.com/potooio/potoo/actions/workflows/ci.yml)
 [![Security Scan](https://github.com/potooio/potoo/actions/workflows/security.yml/badge.svg)](https://github.com/potooio/potoo/actions/workflows/security.yml)
-[![codecov](https://codecov.io/gh/potooio/potoo/branch/master/graph/badge.svg)](https://codecov.io/gh/potooio/potoo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/potooio/potoo)](https://goreportcard.com/report/github.com/potooio/potoo)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/potooio/potoo)](https://github.com/potooio/potoo/blob/master/go.mod)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)

@@ -102,14 +102,6 @@ jobs:
             --format pkgname \
             -- -coverprofile=cover.out -covermode=atomic -race ./...
 
-      - name: Upload coverage to Codecov
-        if: always()
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: cover.out
-          fail_ci_if_error: false
-
       - name: Test summary
         if: always()
         uses: test-summary/action@v2
