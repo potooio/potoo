@@ -1,0 +1,61 @@
+<style>
+  /* Persistent top nav bar matching landing page */
+  .potoo-topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(13, 17, 23, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #30363d;
+  }
+  .potoo-topnav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .potoo-topnav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #e6edf3;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .potoo-topnav-brand img {
+    height: 32px;
+    filter: invert(1);
+  }
+  .potoo-topnav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .potoo-topnav-links a {
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+  }
+  .potoo-topnav-links a:hover {
+    color: #e6edf3;
+  }
+  /* Push the just-the-docs layout down to make room for the top nav */
+  .side-bar {
+    top: 49px !important;
+    height: calc(100% - 49px) !important;
+  }
+  .main {
+    padding-top: 49px !important;
+  }
+  @media (max-width: 799px) {
+    .side-bar {
+      top: 49px !important;
+    }
+  }
+</style>

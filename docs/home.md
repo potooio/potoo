@@ -7,7 +7,7 @@ permalink: /docs/
 ---
 
 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-  <img src="{{ '/assets/images/potoo-xparent.png' | relative_url }}" alt="Potoo" style="height: 100px;">
+  <img src="{{ '/assets/images/potoo-xparent.png' | relative_url }}" alt="Potoo" style="height: 100px; filter: invert(1);">
   <h1 class="fs-9" style="margin: 0;">Potoo</h1>
 </div>
 
@@ -21,7 +21,7 @@ Automatic constraint discovery and explanation for Kubernetes.
 
 ## What is Potoo?
 
-> *Catching bugs in the dark.*
+> *In the dark, catching bugs before they bite.*
 
 Potoo is a Kubernetes operator that **discovers all constraints** affecting your workloads—network policies, admission policies, resource quotas, service mesh rules, and more—and **explains them to developers** when things go wrong.
 
