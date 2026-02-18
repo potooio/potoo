@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-labels
+  uid: test-uid-require-labels
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-team-label
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - production
+                - staging
+              selector:
+                matchLabels:
+                  app.kubernetes.io/managed-by: helm
+      validate:
+        message: "The label 'team' is required."
+        pattern:
+          metadata:
+            labels:
+              team: "?*"
+    - name: check-env-label
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+      validate:
+        message: "The label 'env' is required."
+        pattern:
+          metadata:
+            labels:
+              env: "?*"

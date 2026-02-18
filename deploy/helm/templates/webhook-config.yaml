@@ -1,0 +1,69 @@
+{{- if .Values.admissionWebhook.enabled }}
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "potoo.fullname" . }}-webhook
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webhook
+  {{- if eq .Values.admissionWebhook.certManagement "cert-manager" }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "potoo.fullname" . }}-webhook-tls
+  {{- end }}
+webhooks:
+  - name: constraint-warning.potoo.io
+    clientConfig:
+      service:
+        namespace: {{ .Release.Namespace }}
+        name: {{ include "potoo.fullname" . }}-webhook
+        path: /validate
+        port: 443
+      {{- if eq .Values.admissionWebhook.certManagement "self-signed" }}
+      # CA bundle is injected by the webhook controller at runtime
+      caBundle: ""
+      {{- end }}
+    rules:
+      - operations:
+          - CREATE
+          - UPDATE
+        apiGroups:
+          - ""
+          - apps
+          - batch
+        apiVersions:
+          - "*"
+        resources:
+          - pods
+          - deployments
+          - statefulsets
+          - daemonsets
+          - replicasets
+          - jobs
+          - cronjobs
+          - services
+          - configmaps
+        scope: Namespaced
+    # CRITICAL: Always fail-open to avoid blocking deployments
+    failurePolicy: {{ .Values.admissionWebhook.failurePolicy }}
+    # Only run for user-initiated requests, not controller-generated
+    matchPolicy: Equivalent
+    sideEffects: None
+    admissionReviewVersions:
+      - v1
+    timeoutSeconds: {{ .Values.admissionWebhook.timeoutSeconds }}
+    # Exclude system namespaces
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - kube-public
+            - kube-node-lease
+            - {{ .Release.Namespace }}
+            {{- range .Values.admissionWebhook.excludedNamespaces }}
+            {{- if ne . $.Release.Namespace }}
+            - {{ . }}
+            {{- end }}
+            {{- end }}
+{{- end }}

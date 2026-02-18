@@ -1,0 +1,30 @@
+# NotificationPolicy configuring developer and admin notification scoping.
+# Developers see constraint types and remediation contacts but not cross-namespace
+# policy names or port numbers. Platform admins see full details.
+apiVersion: potoo.io/v1alpha1
+kind: NotificationPolicy
+metadata:
+  name: example-notification-policy
+spec:
+  developerScope:
+    showConstraintType: true
+    showConstraintName: "same-namespace-only"
+    showAffectedPorts: false
+    showRemediationContact: true
+    contact: "platform-team@company.com"
+    maxDetailLevel: "summary"
+  platformAdminScope:
+    showConstraintType: true
+    showConstraintName: "all"
+    showAffectedPorts: true
+    showRemediationContact: true
+    contact: "platform-team@company.com"
+    maxDetailLevel: "full"
+  platformAdminRoles:
+    - "cluster-admin"
+    - "platform-admin"
+  channels:
+    slack:
+      enabled: false
+      webhookUrl: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+      minSeverity: "Critical"

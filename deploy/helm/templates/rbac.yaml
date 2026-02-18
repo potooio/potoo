@@ -1,0 +1,67 @@
+{{- if .Values.rbac.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "potoo.fullname" . }}-controller
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+rules:
+  # Broad read access to discover all constraint-like resources.
+  # This is required for the discovery engine to scan all CRDs and policy objects.
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  # Patch workload annotations with constraint summaries.
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["patch"]
+  # Create Events on workloads to notify developers.
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  # Patch workload annotations (Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, ReplicaSets, Pods).
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+    verbs: ["patch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["patch"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["patch"]
+  # Manage ConstraintReport CRDs.
+  - apiGroups: ["potoo.io"]
+    resources: ["constraintreports", "constraintreports/status"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Read ConstraintProfiles and NotificationPolicies.
+  - apiGroups: ["potoo.io"]
+    resources: ["constraintprofiles", "notificationpolicies"]
+    verbs: ["get", "list", "watch"]
+  # Leader election.
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Webhook self-signed certificate management: store certs in Secrets.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "update"]
+  # Webhook self-signed certificate management: inject CA bundle.
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations"]
+    verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "potoo.fullname" . }}-controller
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "potoo.fullname" . }}-controller
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "potoo.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

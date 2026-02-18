@@ -1,0 +1,37 @@
+# ConstraintProfile: Argo Rollouts AnalysisTemplate
+# Registers Argo Rollouts AnalysisTemplates so Potoo can report on
+# rollout analysis policies that gate deployments.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: argo-rollouts-analysis-templates
+spec:
+  gvr:
+    group: argoproj.io
+    version: v1alpha1
+    resource: analysistemplates
+  adapter: generic
+  enabled: true
+  severity: Warning
+  fieldPaths:
+    selectorPath: "spec.args"
+    summaryPath: "spec.metrics[0].name"
+---
+# ConstraintProfile: Argo Rollouts Rollout
+# Tracks Rollout objects as constraint-like resources since they
+# control deployment strategy and may gate workload changes.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: argo-rollouts-rollouts
+spec:
+  gvr:
+    group: argoproj.io
+    version: v1alpha1
+    resource: rollouts
+  adapter: generic
+  enabled: true
+  severity: Info
+  fieldPaths:
+    selectorPath: "spec.selector"
+    effectPath: "spec.strategy.canary.maxUnavailable"

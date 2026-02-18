@@ -1,0 +1,16 @@
+{{- if and .Values.admissionWebhook.enabled .Values.admissionWebhook.pdb.enabled (gt (int .Values.admissionWebhook.replicas) 1) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "potoo.fullname" . }}-webhook
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webhook
+spec:
+  minAvailable: {{ .Values.admissionWebhook.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "potoo.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webhook
+{{- end }}

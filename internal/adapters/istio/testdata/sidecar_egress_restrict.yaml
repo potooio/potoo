@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1
+kind: Sidecar
+metadata:
+  name: restrict-egress
+  namespace: production
+  uid: sc-egress-001
+spec:
+  workloadSelector:
+    labels:
+      app: web
+  egress:
+    - hosts:
+        - "./*"
+        - "istio-system/*"

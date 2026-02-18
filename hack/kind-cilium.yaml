@@ -1,0 +1,26 @@
+# Kind cluster configuration for Tier 2 E2E tests (Cilium CNI + Hubble).
+#
+# Usage:
+#   kind create cluster --config hack/kind-cilium.yaml
+#
+# This config disables the default CNI so Cilium can be installed as the
+# cluster network plugin. Pods will remain in Pending/ContainerCreating
+# until Cilium is installed:
+#   helm install cilium cilium/cilium --namespace kube-system ...
+#
+# See hack/e2e-setup-cilium.sh for the full setup sequence.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: potoo-cilium
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+networking:
+  disableDefaultCNI: true
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"

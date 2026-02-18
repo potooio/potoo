@@ -1,0 +1,13 @@
+# NetworkPolicy that denies all ingress (empty ingress array).
+# Expected adapter output:
+#   - One NetworkIngress constraint
+#   - Summary: 'denies all ingress traffic'
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: team-alpha
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress

@@ -1,0 +1,33 @@
+# ConstraintProfile: cert-manager Certificate
+# Registers cert-manager's Certificate CRD so Potoo can detect
+# and report on certificate policies affecting workloads.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: cert-manager-certificates
+spec:
+  gvr:
+    group: cert-manager.io
+    version: v1
+    resource: certificates
+  adapter: generic
+  enabled: true
+  severity: Info
+  fieldPaths:
+    selectorPath: "spec.secretTemplate.labels"
+    summaryPath: "spec.commonName"
+---
+# ConstraintProfile: cert-manager ClusterIssuer
+# Tracks cluster-wide certificate issuers.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: cert-manager-clusterissuers
+spec:
+  gvr:
+    group: cert-manager.io
+    version: v1
+    resource: clusterissuers
+  adapter: generic
+  enabled: true
+  severity: Info

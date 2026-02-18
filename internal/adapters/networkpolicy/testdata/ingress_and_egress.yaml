@@ -1,0 +1,37 @@
+# EXPECT: 2 constraints (one NetworkIngress, one NetworkEgress)
+# EXPECT: WorkloadSelector matches app=backend
+# EXPECT: ingress constraint summary mentions "allows ingress" or "restricts ingress"
+# EXPECT: egress constraint summary mentions "restricts egress"
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  namespace: team-alpha
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: database
+      ports:
+        - protocol: TCP
+          port: 5432
+    - ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53

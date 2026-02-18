@@ -1,0 +1,62 @@
+title: Potoo
+description: Automatic constraint discovery and explanation for Kubernetes
+baseurl: ""
+url: "https://potoo.io"
+
+# Logo - displayed on home page next to title
+# logo: "assets/images/potoo.png"
+
+remote_theme: just-the-docs/just-the-docs@v0.8.2
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+# Search
+search_enabled: true
+search.button: true
+
+# Navigation
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Footer
+footer_content: "Potoo is open source software."
+
+# Project URLs (used in page templates)
+github_repo_url: "https://github.com/potooio/potoo"
+
+# External links
+aux_links:
+  "GitHub": "https://github.com/potooio/potoo"
+aux_links_new_tab: true
+
+# Color scheme
+color_scheme: dark
+
+# Code highlighting
+highlighter: rouge
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+# Collections
+collections:
+  docs:
+    permalink: "/:collection/:path/"
+    output: true
+
+# Defaults for front matter
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+# Navigation structure (just-the-docs)
+nav_external_links:
+  - title: GitHub
+    url: https://github.com/potooio/potoo
+    hide_icon: false

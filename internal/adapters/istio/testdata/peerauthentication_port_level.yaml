@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: port-level-mtls
+  namespace: production
+  uid: pa-portlevel-001
+spec:
+  selector:
+    matchLabels:
+      app: mixed
+  mtls:
+    mode: STRICT
+  portLevelMtls:
+    8080:
+      mode: PERMISSIVE

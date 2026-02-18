@@ -1,0 +1,32 @@
+# ConstraintProfile: Crossplane Compositions
+# Registers Crossplane's Composition CRD so Potoo can report on
+# infrastructure composition policies that affect workloads.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: crossplane-compositions
+spec:
+  gvr:
+    group: apiextensions.crossplane.io
+    version: v1
+    resource: compositions
+  adapter: generic
+  enabled: true
+  severity: Info
+  fieldPaths:
+    summaryPath: "spec.writeConnectionSecretsToRef.name"
+---
+# ConstraintProfile: Crossplane EnvironmentConfigs
+# Tracks environment-level configuration constraints.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: crossplane-environment-configs
+spec:
+  gvr:
+    group: apiextensions.crossplane.io
+    version: v1alpha1
+    resource: environmentconfigs
+  adapter: generic
+  enabled: true
+  severity: Warning

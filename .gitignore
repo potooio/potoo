@@ -1,0 +1,63 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+cover.out
+coverage.html
+*.test
+*.out
+
+# Go
+vendor/
+go.work
+go.work.sum
+
+# Build cache
+.cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Helm
+deploy/helm/charts/
+*.tgz
+
+# Generated CRDs are tracked in git for Helm chart bundling.
+# Regenerate with: make manifests
+
+# Local environment
+.env
+.env.local
+*.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Debug
+__debug_bin*
+
+# Jekyll/Docs (generated on build)
+docs/_site/
+docs/.jekyll-cache/
+docs/.jekyll-metadata
+docs/.sass-cache/
+docs/Gemfile.lock
+docs/.bundle/
+notes.md
+.claude/

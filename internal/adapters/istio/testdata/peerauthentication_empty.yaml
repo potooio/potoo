@@ -1,0 +1,7 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: empty-spec
+  namespace: production
+  uid: pa-empty-001
+spec: {}

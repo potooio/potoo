@@ -1,0 +1,28 @@
+{{- if and .Values.admissionWebhook.enabled (eq .Values.admissionWebhook.certManagement "cert-manager") }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "potoo.fullname" . }}-webhook-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webhook
+spec:
+  secretName: {{ include "potoo.fullname" . }}-webhook-tls
+  dnsNames:
+    - {{ include "potoo.fullname" . }}-webhook
+    - {{ include "potoo.fullname" . }}-webhook.{{ .Release.Namespace }}
+    - {{ include "potoo.fullname" . }}-webhook.{{ .Release.Namespace }}.svc
+    - {{ include "potoo.fullname" . }}-webhook.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    {{- if .Values.admissionWebhook.certManager.issuerRef }}
+    {{- toYaml .Values.admissionWebhook.certManager.issuerRef | nindent 4 }}
+    {{- else }}
+    name: {{ .Values.admissionWebhook.certManager.issuerName | default "selfsigned-issuer" }}
+    kind: {{ .Values.admissionWebhook.certManager.issuerKind | default "ClusterIssuer" }}
+    {{- end }}
+  duration: {{ .Values.admissionWebhook.certManager.duration | default "8760h" }}
+  renewBefore: {{ .Values.admissionWebhook.certManager.renewBefore | default "720h" }}
+  usages:
+    - server auth
+{{- end }}

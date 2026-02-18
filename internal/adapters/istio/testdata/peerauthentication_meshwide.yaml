@@ -1,0 +1,9 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+  uid: pa-meshwide-001
+spec:
+  mtls:
+    mode: STRICT

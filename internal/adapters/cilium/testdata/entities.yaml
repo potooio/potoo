@@ -1,0 +1,17 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cluster
+  namespace: internal
+  uid: test-uid-6
+spec:
+  endpointSelector:
+    matchLabels:
+      role: service
+  ingress:
+    - fromEntities:
+        - cluster
+        - host
+  egress:
+    - toEntities:
+        - cluster

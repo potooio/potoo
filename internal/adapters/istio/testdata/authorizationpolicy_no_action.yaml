@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: default-action
+  namespace: production
+  uid: ap-noaction-001
+spec:
+  selector:
+    matchLabels:
+      app: web
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/production/sa/api

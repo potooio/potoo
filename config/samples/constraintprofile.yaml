@@ -1,0 +1,31 @@
+# Example: Register a custom company policy CRD with Potoo.
+# This tells the discovery engine to treat this CRD as a constraint
+# and parse it using the generic adapter.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: company-deployment-restrictions
+spec:
+  gvr:
+    group: policy.internal.company.com
+    version: v1
+    resource: deploymentrestrictions
+  adapter: generic
+  enabled: true
+  severity: Warning
+  debounceSeconds: 60
+---
+# Example: Override settings for Cilium network policies.
+apiVersion: potoo.io/v1alpha1
+kind: ConstraintProfile
+metadata:
+  name: cilium-network-policies
+spec:
+  gvr:
+    group: cilium.io
+    version: v2
+    resource: ciliumnetworkpolicies
+  adapter: cilium
+  enabled: true
+  severity: Critical
+  debounceSeconds: 30

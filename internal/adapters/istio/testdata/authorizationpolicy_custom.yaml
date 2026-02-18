@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: custom-ext-authz
+  namespace: production
+  uid: ap-custom-001
+spec:
+  action: CUSTOM
+  selector:
+    matchLabels:
+      app: api
+  rules:
+    - to:
+        - operation:
+            ports:
+              - "8080"

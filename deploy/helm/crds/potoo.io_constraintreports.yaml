@@ -1,0 +1,464 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: constraintreports.potoo.io
+spec:
+  group: potoo.io
+  names:
+    kind: ConstraintReport
+    listKind: ConstraintReportList
+    plural: constraintreports
+    shortNames:
+    - cr
+    singular: constraintreport
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.constraintCount
+      name: Constraints
+      type: integer
+    - jsonPath: .status.criticalCount
+      name: Critical
+      type: integer
+    - jsonPath: .status.warningCount
+      name: Warning
+      type: integer
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: |-
+          ConstraintReport is a per-namespace summary of all constraints affecting
+          workloads in that namespace. Created and updated automatically by the controller.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          status:
+            properties:
+              constraintCount:
+                description: Total number of constraints affecting this namespace.
+                type: integer
+              constraints:
+                description: Individual constraint entries (human-readable, for kubectl
+                  display).
+                items:
+                  properties:
+                    affectedWorkloads:
+                      description: AffectedWorkloads lists the workload names in this
+                        namespace that match.
+                      items:
+                        type: string
+                      type: array
+                    lastSeen:
+                      description: LastSeen is when this constraint was last observed.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message is a human-readable summary (detail level
+                        depends on privacy scope).
+                      type: string
+                    name:
+                      description: Name of the constraint (redacted if cross-namespace,
+                        per privacy model).
+                      type: string
+                    severity:
+                      description: Severity level.
+                      enum:
+                      - Critical
+                      - Warning
+                      - Info
+                      type: string
+                    source:
+                      description: Source identifies the type of policy engine that
+                        created this constraint.
+                      type: string
+                    type:
+                      description: Type of constraint.
+                      enum:
+                      - NetworkIngress
+                      - NetworkEgress
+                      - Admission
+                      - ResourceLimit
+                      - MeshPolicy
+                      - MissingResource
+                      - Unknown
+                      type: string
+                  required:
+                  - lastSeen
+                  - message
+                  - name
+                  - severity
+                  - source
+                  - type
+                  type: object
+                type: array
+              criticalCount:
+                description: Count by severity.
+                type: integer
+              infoCount:
+                type: integer
+              lastUpdated:
+                description: LastUpdated is when this report was last reconciled.
+                format: date-time
+                type: string
+              machineReadable:
+                description: |-
+                  MachineReadable contains structured data optimized for programmatic consumption
+                  by AI agents, kubectl plugins, and automation tools. This section contains the
+                  same data as Constraints but in a richer, typed format with structured remediation.
+                properties:
+                  constraints:
+                    description: Constraints is the structured list of active constraints.
+                    items:
+                      description: MachineConstraintEntry is a single constraint in
+                        the machine-readable report.
+                      properties:
+                        affectedWorkloads:
+                          description: AffectedWorkloads lists workloads in this namespace
+                            matched by this constraint.
+                          items:
+                            description: WorkloadReference identifies an affected
+                              workload with the reason it matched.
+                            properties:
+                              kind:
+                                type: string
+                              matchReason:
+                                type: string
+                              name:
+                                type: string
+                            required:
+                            - kind
+                            - name
+                            type: object
+                          type: array
+                        constraintType:
+                          description: ConstraintType categorizes the constraint.
+                          enum:
+                          - NetworkIngress
+                          - NetworkEgress
+                          - Admission
+                          - ResourceLimit
+                          - MeshPolicy
+                          - MissingResource
+                          - Unknown
+                          type: string
+                        effect:
+                          description: Effect is what this constraint does (deny,
+                            restrict, warn, limit, audit).
+                          type: string
+                        lastObserved:
+                          description: LastObserved is when this constraint was last
+                            seen in the cluster.
+                          format: date-time
+                          type: string
+                        metrics:
+                          additionalProperties:
+                            description: ResourceMetric holds quantitative data for
+                              a single resource type.
+                            properties:
+                              hard:
+                                type: string
+                              percentUsed:
+                                type: number
+                              unit:
+                                type: string
+                              used:
+                                type: string
+                            required:
+                            - hard
+                            - percentUsed
+                            - unit
+                            - used
+                            type: object
+                          description: |-
+                            Metrics contains quantitative data (e.g., quota utilization percentages).
+                            Only populated for ResourceLimit constraints.
+                          type: object
+                        name:
+                          description: Name of the constraint.
+                          type: string
+                        remediation:
+                          description: Remediation provides structured, actionable
+                            remediation steps.
+                          properties:
+                            steps:
+                              description: Steps is an ordered list of remediation
+                                actions.
+                              items:
+                                description: RemediationStep is a single actionable
+                                  remediation step.
+                                properties:
+                                  command:
+                                    description: Command is a kubectl command to run
+                                      (populated when Type=kubectl).
+                                    type: string
+                                  contact:
+                                    description: Contact is a contact address for
+                                      manual steps (email, Slack channel).
+                                    type: string
+                                  description:
+                                    description: Description is a human-readable explanation
+                                      of this step.
+                                    type: string
+                                  patch:
+                                    description: Patch is a kubectl patch command
+                                      (populated when Type=annotation or yaml_patch).
+                                    type: string
+                                  requiresPrivilege:
+                                    description: RequiresPrivilege indicates the minimum
+                                      privilege level needed.
+                                    enum:
+                                    - developer
+                                    - namespace-admin
+                                    - cluster-admin
+                                    type: string
+                                  template:
+                                    description: |-
+                                      Template is a YAML manifest template (populated when Type=yaml_patch).
+                                      May contain {workload_name}, {namespace} placeholders.
+                                    type: string
+                                  type:
+                                    description: Type categorizes this step.
+                                    enum:
+                                    - manual
+                                    - kubectl
+                                    - annotation
+                                    - yaml_patch
+                                    - link
+                                    type: string
+                                  url:
+                                    description: URL is a link to documentation or
+                                      a runbook (populated when Type=link).
+                                    type: string
+                                required:
+                                - description
+                                - type
+                                type: object
+                              type: array
+                            summary:
+                              description: Summary is a one-line human-readable description.
+                              type: string
+                          required:
+                          - summary
+                          type: object
+                        severity:
+                          description: Severity level.
+                          enum:
+                          - Critical
+                          - Warning
+                          - Info
+                          type: string
+                        sourceRef:
+                          description: |-
+                            SourceRef identifies the Kubernetes object that defines this constraint.
+                            Agents can use this to fetch the full policy (subject to RBAC).
+                          properties:
+                            apiVersion:
+                              type: string
+                            kind:
+                              type: string
+                            name:
+                              type: string
+                            namespace:
+                              description: Namespace is empty for cluster-scoped objects.
+                              type: string
+                          required:
+                          - apiVersion
+                          - kind
+                          - name
+                          type: object
+                        tags:
+                          description: Tags for agent filtering (e.g., "network",
+                            "egress", "port-restriction").
+                          items:
+                            type: string
+                          type: array
+                        uid:
+                          description: UID of the constraint (stable across report
+                            regenerations).
+                          type: string
+                      required:
+                      - constraintType
+                      - effect
+                      - lastObserved
+                      - name
+                      - remediation
+                      - severity
+                      - sourceRef
+                      - uid
+                      type: object
+                    type: array
+                  detailLevel:
+                    description: DetailLevel indicates the privacy scoping applied
+                      to this report.
+                    enum:
+                    - summary
+                    - detailed
+                    - full
+                    type: string
+                  generatedAt:
+                    description: GeneratedAt is when this machine-readable section
+                      was last rendered.
+                    format: date-time
+                    type: string
+                  missingResources:
+                    description: MissingResources lists detected missing companion
+                      resources.
+                    items:
+                      description: MissingResourceEntry describes a companion resource
+                        that should exist but doesn't.
+                      properties:
+                        expectedAPIVersion:
+                          description: ExpectedAPIVersion is the API version of the
+                            expected resource.
+                          type: string
+                        expectedKind:
+                          description: ExpectedKind is the Kubernetes kind that should
+                            exist.
+                          type: string
+                        forWorkload:
+                          description: ForWorkload identifies which workload needs
+                            this resource.
+                          properties:
+                            kind:
+                              type: string
+                            matchReason:
+                              type: string
+                            name:
+                              type: string
+                          required:
+                          - kind
+                          - name
+                          type: object
+                        reason:
+                          description: Reason explains why this resource is expected.
+                          type: string
+                        remediation:
+                          description: Remediation provides steps to create the missing
+                            resource.
+                          properties:
+                            steps:
+                              description: Steps is an ordered list of remediation
+                                actions.
+                              items:
+                                description: RemediationStep is a single actionable
+                                  remediation step.
+                                properties:
+                                  command:
+                                    description: Command is a kubectl command to run
+                                      (populated when Type=kubectl).
+                                    type: string
+                                  contact:
+                                    description: Contact is a contact address for
+                                      manual steps (email, Slack channel).
+                                    type: string
+                                  description:
+                                    description: Description is a human-readable explanation
+                                      of this step.
+                                    type: string
+                                  patch:
+                                    description: Patch is a kubectl patch command
+                                      (populated when Type=annotation or yaml_patch).
+                                    type: string
+                                  requiresPrivilege:
+                                    description: RequiresPrivilege indicates the minimum
+                                      privilege level needed.
+                                    enum:
+                                    - developer
+                                    - namespace-admin
+                                    - cluster-admin
+                                    type: string
+                                  template:
+                                    description: |-
+                                      Template is a YAML manifest template (populated when Type=yaml_patch).
+                                      May contain {workload_name}, {namespace} placeholders.
+                                    type: string
+                                  type:
+                                    description: Type categorizes this step.
+                                    enum:
+                                    - manual
+                                    - kubectl
+                                    - annotation
+                                    - yaml_patch
+                                    - link
+                                    type: string
+                                  url:
+                                    description: URL is a link to documentation or
+                                      a runbook (populated when Type=link).
+                                    type: string
+                                required:
+                                - description
+                                - type
+                                type: object
+                              type: array
+                            summary:
+                              description: Summary is a one-line human-readable description.
+                              type: string
+                          required:
+                          - summary
+                          type: object
+                        severity:
+                          description: Severity level.
+                          enum:
+                          - Critical
+                          - Warning
+                          - Info
+                          type: string
+                      required:
+                      - expectedAPIVersion
+                      - expectedKind
+                      - forWorkload
+                      - reason
+                      - remediation
+                      - severity
+                      type: object
+                    type: array
+                  schemaVersion:
+                    description: SchemaVersion allows agents to detect breaking changes.
+                      Currently "1".
+                    type: string
+                  tags:
+                    description: Tags is a flat list of all tags across all constraints
+                      for agent filtering.
+                    items:
+                      type: string
+                    type: array
+                required:
+                - detailLevel
+                - generatedAt
+                - schemaVersion
+                type: object
+              warningCount:
+                type: integer
+            required:
+            - constraintCount
+            - criticalCount
+            - infoCount
+            - lastUpdated
+            - warningCount
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

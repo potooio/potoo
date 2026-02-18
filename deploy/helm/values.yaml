@@ -1,0 +1,221 @@
+# Potoo Helm Values
+# See docs/ARCHITECTURE.md for detailed descriptions.
+
+# -- Controller configuration
+controller:
+  replicas: 2
+  image:
+    repository: ghcr.io/potooio/potoo
+    tag: ""  # Defaults to appVersion
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  # -- Leader election (recommended for HA)
+  leaderElect: true
+  # -- How often to rescan for newly installed CRDs
+  rescanInterval: 5m
+  # -- Minimum time between annotation PATCHes for the same workload
+  annotatorDebounce: 30s
+  # -- How long namespace workload lists are cached before re-fetching
+  annotatorCacheTTL: 30s
+  # -- Minimum time between ConstraintReport reconciles for the same namespace
+  reportDebounce: 10s
+  # -- Number of concurrent workers processing ConstraintReport reconciles
+  reportWorkers: 3
+  # -- Additional args passed to the controller binary
+  extraArgs: []
+  # -- Node selector
+  nodeSelector: {}
+  # -- Tolerations
+  tolerations: []
+  # -- Pod affinity/anti-affinity
+  affinity: {}
+  # -- Pod annotations
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+
+# -- Admission webhook configuration (separate deployment)
+admissionWebhook:
+  enabled: true
+  replicas: 2
+  # -- MUST be Ignore for safety. Never set to Fail.
+  failurePolicy: Ignore
+  # -- Webhook timeout in seconds (short to avoid slowing deployments)
+  timeoutSeconds: 5
+  # -- Namespaces to exclude from webhook validation
+  excludedNamespaces:
+    - potoo-system
+  image:
+    repository: ghcr.io/potooio/potoo-webhook
+    tag: ""
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  # -- PodDisruptionBudget
+  pdb:
+    enabled: true
+    minAvailable: 1
+  # -- Certificate management: "cert-manager" or "self-signed"
+  certManagement: self-signed
+  # -- cert-manager configuration (when certManagement is "cert-manager")
+  certManager:
+    # -- Override issuer reference
+    issuerRef: {}
+    # -- Issuer name (if not using issuerRef)
+    issuerName: ""
+    # -- Issuer kind (ClusterIssuer or Issuer)
+    issuerKind: ClusterIssuer
+    # -- Certificate duration
+    duration: 8760h  # 1 year
+    # -- Renew before expiry
+    renewBefore: 720h  # 30 days
+
+# -- Adapter auto-detection
+# "auto" = enable if CRDs exist; "enabled" = always; "disabled" = never
+adapters:
+  networkpolicy:
+    enabled: true  # Always available (native K8s)
+  resourcequota:
+    enabled: true  # Always available (native K8s)
+  webhook:
+    enabled: true  # Always available (native K8s)
+  cilium:
+    enabled: auto
+  gatekeeper:
+    enabled: auto
+  kyverno:
+    enabled: auto
+  istio:
+    enabled: auto
+  prometheus:
+    enabled: auto
+
+# -- Discovery tuning
+discovery:
+  # -- Additional API groups to treat as policy sources (beyond built-in groups)
+  additionalPolicyGroups: []
+  # -- Additional resource name substrings for heuristic policy detection
+  additionalPolicyNameHints: []
+  # -- Check CRDs for potoo.io/is-policy annotation during discovery scan
+  checkCRDAnnotations: true
+
+# -- Hubble integration (requires Cilium with Hubble enabled)
+hubble:
+  enabled: false
+  relayAddress: hubble-relay.kube-system.svc:4245
+
+# -- Missing resource detection
+requirements:
+  enabled: true
+  # -- Seconds to wait before alerting on missing resources (avoids false positives during sync)
+  debounceSeconds: 120
+
+# -- Notification configuration
+notifications:
+  # -- Kubernetes Events on affected workloads (always recommended)
+  kubernetesEvents: true
+  # -- ConstraintReport CRD per namespace
+  constraintReports: true
+  # -- Rate limit: max events per minute per namespace
+  rateLimitPerMinute: 100
+  # -- Slack integration
+  slack:
+    enabled: false
+    webhookUrl: ""
+    minSeverity: Critical
+  # -- Generic webhook (HTTP POST with JSON payload)
+  webhook:
+    enabled: false
+    url: ""
+    # -- HTTP request timeout in seconds (1-60)
+    timeoutSeconds: 10
+    # -- Disable TLS certificate verification (insecure, for testing only)
+    insecureSkipVerify: false
+    # -- Minimum severity to trigger webhook notifications (Critical, Warning, Info)
+    minSeverity: Warning
+    # -- Auth token Secret reference for webhook Authorization header (Bearer token).
+    # If set, the Secret value is mounted as POTOO_WEBHOOK_AUTH_TOKEN env var.
+    authTokenSecretRef:
+      # -- Name of the Secret containing the auth token
+      name: ""
+      # -- Key within the Secret
+      key: "token"
+  # -- Notification deduplication
+  deduplication:
+    enabled: true
+    # -- Don't re-notify for the same constraint unless it changes
+    suppressDuplicateMinutes: 60
+
+# -- Privacy and detail level configuration
+privacy:
+  # -- Default detail level for developer-facing notifications
+  defaultDeveloperDetailLevel: summary
+  # -- Show constraint names from other namespaces
+  showCrossNamespacePolicyNames: false
+  # -- Show specific port numbers in developer notifications
+  showPortNumbers: false
+  # -- Default contact for remediation hints
+  remediationContact: ""
+
+# -- RBAC
+rbac:
+  create: true
+
+# -- ServiceAccount
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# -- Monitoring
+monitoring:
+  # -- ServiceMonitor for Prometheus Operator
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+  # -- Grafana dashboard ConfigMap
+  grafanaDashboard:
+    enabled: false
+
+# -- MCP Server (Model Context Protocol for AI agent integration)
+mcp:
+  enabled: false
+  port: 8090
+  # -- Transport: "sse" for remote agents, "stdio" for local agents
+  transport: sse
+  # -- Authentication for MCP clients
+  authentication:
+    # -- "bearer-token" for external agents, "kubernetes-sa" for in-cluster agents
+    method: kubernetes-sa
+
+# -- Workload annotations (annotate affected Deployments/StatefulSets with constraint summaries)
+workloadAnnotations:
+  enabled: true
+  # -- Which workload kinds to annotate
+  kinds:
+    - Deployment
+    - StatefulSet
+    - DaemonSet
+  # -- Max number of constraints to include in the JSON annotation (prevents oversized annotations)
+  maxConstraintsPerWorkload: 20
+
+# -- kubectl plugin
+kubectlPlugin:
+  # -- Install kubectl-sentinel plugin via Krew (future)
+  installInstructions: "go install github.com/potooio/potoo/cmd/kubectl-sentinel@latest"
+
+# -- API server (serves /api/v1/health, /api/v1/capabilities, /openapi/v3)
+apiServer:
+  enabled: true
+  port: 8092

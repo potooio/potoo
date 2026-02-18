@@ -1,0 +1,23 @@
+# EXPECT: 1 constraint, type=ResourceLimit
+# EXPECT: Severity=Warning (CPU at 80%, Memory at 76%)
+# EXPECT: Summary contains "CPU" and "Memory" with percentages
+# EXPECT: AffectedNamespaces = ["team-alpha"]
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-alpha-quota
+  namespace: team-alpha
+spec:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+    pods: "20"
+status:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+    pods: "20"
+  used:
+    cpu: "3200m"
+    memory: 6Gi
+    pods: "15"

@@ -1,0 +1,7 @@
+apiVersion: networking.istio.io/v1
+kind: Sidecar
+metadata:
+  name: empty-sidecar
+  namespace: production
+  uid: sc-empty-001
+spec: {}

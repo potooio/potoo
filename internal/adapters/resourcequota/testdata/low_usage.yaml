@@ -1,0 +1,18 @@
+# EXPECT: 1 constraint, type=ResourceLimit
+# EXPECT: Severity=Info (CPU at 25%, Memory at 12%)
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: low-usage-quota
+  namespace: team-gamma
+spec:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+status:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+  used:
+    cpu: "1"
+    memory: 1Gi

@@ -1,0 +1,23 @@
+# EXPECT: 1 constraint, type=Admission
+# EXPECT: Severity=Warning (failurePolicy=Fail)
+# EXPECT: Summary contains "Validating webhook" and operations
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: pod-policy
+webhooks:
+- name: pod-policy.example.com
+  failurePolicy: Fail
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    operations: ["CREATE", "UPDATE"]
+    resources: ["pods"]
+  clientConfig:
+    service:
+      name: policy-webhook
+      namespace: kube-system
+      path: /validate
+    caBundle: LS0tLS...
+  admissionReviewVersions: ["v1"]
+  sideEffects: None

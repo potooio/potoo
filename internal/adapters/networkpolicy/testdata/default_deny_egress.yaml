@@ -1,0 +1,12 @@
+# EXPECT: 1 constraint of type NetworkEgress
+# EXPECT: Summary contains "denies all egress"
+# EXPECT: AffectedNamespaces = ["team-alpha"]
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-egress
+  namespace: team-alpha
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress

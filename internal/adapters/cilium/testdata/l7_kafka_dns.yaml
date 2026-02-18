@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: kafka-dns-policy
+  namespace: streaming
+  uid: test-uid-l7-kafka-dns
+spec:
+  endpointSelector:
+    matchLabels:
+      app: consumer
+  egress:
+    - toPorts:
+        - ports:
+            - port: "9092"
+              protocol: TCP
+          rules:
+            kafka:
+              - topic: "events"
+                role: "consume"
+    - toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*.cluster.local"

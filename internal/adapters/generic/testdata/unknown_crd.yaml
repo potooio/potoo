@@ -1,0 +1,15 @@
+# EXPECT: 1 constraint, type=Unknown
+# EXPECT: Severity=Info (default)
+# EXPECT: Summary contains kind and name
+apiVersion: example.com/v1
+kind: CustomPolicy
+metadata:
+  name: test-policy
+  namespace: team-alpha
+spec:
+  selector:
+    matchLabels:
+      app: web
+  rules:
+  - action: deny
+    from: external

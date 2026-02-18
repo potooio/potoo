@@ -1,0 +1,8 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-nothing
+  namespace: production
+  uid: ap-empty-001
+spec:
+  action: DENY

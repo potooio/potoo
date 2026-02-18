@@ -1,0 +1,21 @@
+# Sample Deployment without resource limits.
+# When deployed to a namespace with a ResourceQuota, Potoo will warn that
+# this workload is missing resource requests/limits and may fail scheduling.
+# Use "potoo check -f examples/deployment.yaml" to pre-check before deploying.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: app
+          image: nginx

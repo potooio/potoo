@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: multi-spec-policy
+  namespace: production
+  uid: test-uid-specs-list
+specs:
+  - endpointSelector:
+      matchLabels:
+        app: frontend
+    ingress:
+      - fromEndpoints:
+          - matchLabels:
+              app: gateway
+        toPorts:
+          - ports:
+              - port: "80"
+                protocol: TCP
+  - endpointSelector:
+      matchLabels:
+        app: backend
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              app: database
+        toPorts:
+          - ports:
+              - port: "5432"
+                protocol: TCP

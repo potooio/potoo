@@ -1,0 +1,18 @@
+# EXPECT: 1 constraint, type=ResourceLimit
+# EXPECT: Severity=Critical (CPU at 95%)
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: critical-quota
+  namespace: team-beta
+spec:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+status:
+  hard:
+    cpu: "4"
+    memory: 8Gi
+  used:
+    cpu: "3800m"
+    memory: "7700Mi"

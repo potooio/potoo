@@ -1,0 +1,17 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cidr-except-policy
+  namespace: production
+  uid: test-uid-cidr-except
+spec:
+  endpointSelector:
+    matchLabels:
+      app: worker
+  egress:
+    - toCIDR:
+        - "10.0.0.0/8"
+    - toCIDRSet:
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.1.0/24"

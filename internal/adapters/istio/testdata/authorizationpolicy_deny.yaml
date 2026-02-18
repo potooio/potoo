@@ -1,0 +1,22 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-external
+  namespace: production
+  uid: ap-deny-001
+spec:
+  action: DENY
+  selector:
+    matchLabels:
+      app: web
+  rules:
+    - from:
+        - source:
+            namespaces:
+              - untrusted
+      to:
+        - operation:
+            methods:
+              - DELETE
+            paths:
+              - /admin/*

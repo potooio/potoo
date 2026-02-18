@@ -1,0 +1,12 @@
+# ResourceQuota limiting CPU and memory in a namespace.
+# Potoo will discover this and report it as a Warning/ResourceLimit constraint.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi

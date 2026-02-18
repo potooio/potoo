@@ -1,0 +1,299 @@
+name: Security Scanning & SBOM
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Dockerfile'
+      - '.github/workflows/security.yml'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Dockerfile'
+      - '.github/workflows/security.yml'
+  schedule:
+    # Run weekly on Monday at 9am UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  packages: write
+
+env:
+  GO_VERSION: '1.25.7'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Go vulnerability scanning
+  govulncheck:
+    name: Go Vulnerability Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: ${{ env.GO_VERSION }}
+          output-format: sarif
+          output-file: govulncheck.sarif
+
+      - name: Upload govulncheck SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: govulncheck.sarif
+          category: govulncheck
+
+  # Static analysis with CodeQL
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: go
+          queries: +security-extended,security-and-quality
+
+      - name: Build
+        run: make build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:go"
+
+  # Dependency review for PRs
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0
+
+  # Container image scanning and SBOM generation
+  container-scan:
+    name: Container Scan & SBOM
+    runs-on: ubuntu-latest
+    # Only run on push to main/master or on release tags
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build controller image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: BINARY=controller
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:scan
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build webhook image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: BINARY=webhook
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}-webhook:scan
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Trivy on controller image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:scan
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          vuln-type: 'os,library'
+
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'container-scanning'
+
+      - name: Run Trivy on webhook image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}-webhook:scan
+          format: 'sarif'
+          output: 'trivy-webhook-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          vuln-type: 'os,library'
+
+      - name: Upload Trivy webhook scan results
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-webhook-results.sarif'
+          category: 'webhook-container-scanning'
+
+      - name: Generate SBOM with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_NAME }}:scan
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-artifact: true
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_NAME }}:scan
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+          upload-artifact: true
+
+      - name: Upload SBOMs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: |
+            sbom.spdx.json
+            sbom.cyclonedx.json
+          retention-days: 90
+
+  # Go module SBOM (runs on every PR)
+  go-sbom:
+    name: Go Module SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Generate Go module SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: go-sbom.spdx.json
+
+      - name: Upload Go SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-sbom
+          path: go-sbom.spdx.json
+          retention-days: 90
+
+  # Secret scanning (additional layer beyond GitHub's built-in)
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: docker://ghcr.io/gitleaks/gitleaks:v8.30.0
+        with:
+          args: detect --source /github/workspace --verbose --report-format sarif --report-path /github/workspace/gitleaks.sarif
+
+      - name: Upload Gitleaks SARIF
+        if: always() && hashFiles('gitleaks.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: gitleaks.sarif
+          category: gitleaks
+
+      - name: Upload Gitleaks report artifact
+        if: always() && hashFiles('gitleaks.sarif') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-sarif
+          path: gitleaks.sarif
+          retention-days: 90
+
+  # License compliance check
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install go-licenses
+        run: go install github.com/google/go-licenses@latest
+
+      - name: Check licenses
+        run: |
+          go-licenses check ./... --disallowed_types=forbidden,restricted 2>&1 | tee license-report.txt || true
+          # Fail on GPL/AGPL (incompatible with Apache 2.0)
+          if grep -qE "(GPL|AGPL)" license-report.txt; then
+            echo "::error::Found GPL/AGPL licensed dependencies"
+            exit 1
+          fi
+
+      - name: Generate license report
+        run: go-licenses report ./... --template=csv > licenses.csv 2>/dev/null || true
+
+      - name: Upload license report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: licenses.csv
+          retention-days: 90

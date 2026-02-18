@@ -1,0 +1,28 @@
+# Example: Default notification policy for the cluster.
+apiVersion: potoo.io/v1alpha1
+kind: NotificationPolicy
+metadata:
+  name: default
+spec:
+  developerScope:
+    showConstraintType: true
+    showConstraintName: "same-namespace-only"
+    showAffectedPorts: false
+    showRemediationContact: true
+    contact: "platform-team@company.com"
+    maxDetailLevel: "summary"
+  platformAdminScope:
+    showConstraintType: true
+    showConstraintName: "all"
+    showAffectedPorts: true
+    showRemediationContact: true
+    contact: "platform-team@company.com"
+    maxDetailLevel: "full"
+  platformAdminRoles:
+    - "cluster-admin"
+    - "platform-admin"
+  channels:
+    slack:
+      enabled: false
+      webhookUrl: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+      minSeverity: "Critical"

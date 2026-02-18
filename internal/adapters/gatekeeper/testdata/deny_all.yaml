@@ -1,0 +1,14 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDenyAll
+metadata:
+  name: deny-privileged-containers
+  uid: test-uid-deny-all
+spec:
+  enforcementAction: dryrun
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaceSelector:
+      matchLabels:
+        environment: production

@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-frontend
+  namespace: production
+  uid: ap-allow-001
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: frontend
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/production/sa/api-gateway

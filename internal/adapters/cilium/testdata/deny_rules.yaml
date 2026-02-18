@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: block-untrusted
+  namespace: secure
+  uid: test-uid-3
+spec:
+  endpointSelector:
+    matchLabels:
+      tier: secure
+  ingressDeny:
+    - fromEntities:
+        - world
+  egressDeny:
+    - toEntities:
+        - world

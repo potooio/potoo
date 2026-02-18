@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: add-default-resources
+  namespace: default
+  uid: test-uid-add-resources
+spec:
+  rules:
+    - name: add-cpu-limits
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - (name): "*"
+                resources:
+                  limits:
+                    cpu: "1"

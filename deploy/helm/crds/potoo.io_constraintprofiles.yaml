@@ -1,0 +1,117 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: constraintprofiles.potoo.io
+spec:
+  group: potoo.io
+  names:
+    kind: ConstraintProfile
+    listKind: ConstraintProfileList
+    plural: constraintprofiles
+    shortNames:
+    - cp
+    singular: constraintprofile
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: |-
+          ConstraintProfile configures how a specific CRD type is treated by the
+          discovery engine. Platform admins use this to register custom policy CRDs
+          or tune adapter behavior.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              adapter:
+                description: |-
+                  Adapter is the name of the adapter to use for parsing.
+                  Use "generic" for unknown CRDs or the name of a built-in adapter.
+                type: string
+              debounceSeconds:
+                description: DebounceSeconds overrides the default debounce interval
+                  for notifications.
+                type: integer
+              enabled:
+                default: true
+                description: Enabled controls whether this resource type is watched.
+                type: boolean
+              fieldPaths:
+                description: |-
+                  FieldPaths configures custom extraction paths for the generic adapter.
+                  Only used when Adapter is "generic". Each path is dot-delimited
+                  (e.g., "spec.workloadSelector").
+                properties:
+                  effectPath:
+                    description: |-
+                      EffectPath is the path to the effect/action field.
+                      Example: "spec.action"
+                    type: string
+                  namespaceSelectorPath:
+                    description: |-
+                      NamespaceSelectorPath is the path to the namespace label selector.
+                      Example: "spec.namespaceSelector"
+                    type: string
+                  selectorPath:
+                    description: |-
+                      SelectorPath is the path to the workload label selector.
+                      Example: "spec.workloadSelector"
+                    type: string
+                  summaryPath:
+                    description: |-
+                      SummaryPath is the path to a human-readable description.
+                      Example: "spec.description"
+                    type: string
+                type: object
+              gvr:
+                description: GVR identifies the target resource type.
+                properties:
+                  group:
+                    type: string
+                  resource:
+                    type: string
+                  version:
+                    type: string
+                required:
+                - group
+                - resource
+                - version
+                type: object
+              severity:
+                description: Severity overrides the default severity for constraints
+                  from this source.
+                enum:
+                - Critical
+                - Warning
+                - Info
+                type: string
+            required:
+            - adapter
+            - enabled
+            - gvr
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true

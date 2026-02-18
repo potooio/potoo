@@ -1,0 +1,280 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GO_VERSION: '1.25.7'
+  REGISTRY: ghcr.io
+  IMAGE_BASE: ghcr.io/${{ github.repository_owner }}/potoo
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Validate the tag and run tests as a release gate
+  # ---------------------------------------------------------------------------
+  validate:
+    name: Validate & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      version_tag: ${{ steps.meta.outputs.version_tag }}
+      major_minor: ${{ steps.meta.outputs.major_minor }}
+      is_prerelease: ${{ steps.meta.outputs.is_prerelease }}
+    steps:
+      - name: Extract and validate version
+        id: meta
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          # Validate semver: vX.Y.Z or vX.Y.Z-prerelease
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9._]+)?$ ]]; then
+            echo "::error::Tag '$TAG' does not match semver format vX.Y.Z[-prerelease]"
+            exit 1
+          fi
+          VERSION="${TAG#v}"
+          MAJOR_MINOR="v$(echo "$VERSION" | cut -d. -f1,2)"
+          IS_PRERELEASE="false"
+          if [[ "$TAG" == *-* ]]; then
+            IS_PRERELEASE="true"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "major_minor=$MAJOR_MINOR" >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=$IS_PRERELEASE" >> "$GITHUB_OUTPUT"
+          echo "### Release Meta" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Tag:** $TAG" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Version:** $VERSION" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Pre-release:** $IS_PRERELEASE" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Run tests
+        run: go test -race ./...
+
+  # ---------------------------------------------------------------------------
+  # Job 2: Build and push container images (matrix: controller + webhook)
+  # ---------------------------------------------------------------------------
+  images:
+    name: Image (${{ matrix.binary }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: validate
+    strategy:
+      matrix:
+        include:
+          - binary: controller
+            image_suffix: ""
+          - binary: webhook
+            image_suffix: "-webhook"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: docker-meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_BASE }}${{ matrix.image_suffix }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ needs.validate.outputs.is_prerelease == 'false' }}
+
+      - name: Build and push
+        id: build-push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          build-args: BINARY=${{ matrix.binary }}
+          push: true
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          labels: ${{ steps.docker-meta.outputs.labels }}
+          provenance: true
+          sbom: true
+          cache-from: type=gha,scope=build-${{ matrix.binary }}
+          cache-to: type=gha,scope=build-${{ matrix.binary }},mode=max
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image
+        run: cosign sign --yes "${{ env.IMAGE_BASE }}${{ matrix.image_suffix }}@${{ steps.build-push.outputs.digest }}"
+
+  # ---------------------------------------------------------------------------
+  # Job 3: Build CLI binaries for multiple OS/arch combinations
+  # ---------------------------------------------------------------------------
+  cli-binaries:
+    name: CLI (${{ matrix.goos }}/${{ matrix.goarch }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            ext: ""
+          - goos: linux
+            goarch: arm64
+            ext: ""
+          - goos: darwin
+            goarch: amd64
+            ext: ""
+          - goos: darwin
+            goarch: arm64
+            ext: ""
+          - goos: windows
+            goarch: amd64
+            ext: ".exe"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Build potooctl
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          go build \
+            -ldflags "-s -w -X main.version=${{ needs.validate.outputs.version }}" \
+            -o potooctl-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} \
+            ./cmd/potooctl/
+
+      - name: Build potoo-sentinel
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          go build \
+            -ldflags "-s -w -X main.version=${{ needs.validate.outputs.version }}" \
+            -o potoo-sentinel-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} \
+            ./cmd/potooctl/potoo-sentinel/
+
+      - name: Generate checksums
+        run: |
+          sha256sum potooctl-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} \
+            > potooctl-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}.sha256
+          sha256sum potoo-sentinel-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} \
+            > potoo-sentinel-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}.sha256
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            potooctl-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}
+            potooctl-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}.sha256
+            potoo-sentinel-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}
+            potoo-sentinel-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}.sha256
+
+  # ---------------------------------------------------------------------------
+  # Job 4: Package and push the Helm chart
+  # ---------------------------------------------------------------------------
+  helm-chart:
+    name: Helm Chart
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, images]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Patch Chart.yaml with release version
+        run: |
+          sed -i "s/^version:.*/version: ${{ needs.validate.outputs.version }}/" deploy/helm/Chart.yaml
+          sed -i "s/^appVersion:.*/appVersion: \"${{ needs.validate.outputs.version }}\"/" deploy/helm/Chart.yaml
+
+      - name: Lint chart
+        run: helm lint deploy/helm/
+
+      - name: Package chart
+        run: helm package deploy/helm/ --destination .
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Push chart to OCI registry
+        run: helm push potoo-${{ needs.validate.outputs.version }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
+
+      - name: Upload chart artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: helm-chart
+          path: potoo-${{ needs.validate.outputs.version }}.tgz
+
+  # ---------------------------------------------------------------------------
+  # Job 5: Create GitHub Release with all assets
+  # ---------------------------------------------------------------------------
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, images, cli-binaries, helm-chart]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download CLI artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cli-*
+          merge-multiple: true
+          path: dist/
+
+      - name: Download Helm chart artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: helm-chart
+          path: dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.validate.outputs.version_tag }}
+          generate_release_notes: true
+          prerelease: ${{ needs.validate.outputs.is_prerelease == 'true' }}
+          files: dist/*

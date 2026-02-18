@@ -1,0 +1,17 @@
+.git
+.github
+.claude
+bin/
+docs/
+deploy/
+config/
+hack/
+test/
+*.md
+*.txt
+*.log
+cover.out
+coverage.html
+.gitignore
+.dockerignore
+Makefile

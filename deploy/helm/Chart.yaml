@@ -1,0 +1,21 @@
+apiVersion: v2
+name: potoo
+description: Automatic constraint discovery and developer notification for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - policy
+  - notification
+  - developer-experience
+  - constraint
+  - network-policy
+  - gatekeeper
+  - kyverno
+  - cilium
+home: https://github.com/potooio/potoo
+sources:
+  - https://github.com/potooio/potoo
+maintainers:
+  - name: potooio

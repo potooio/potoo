@@ -1,0 +1,25 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-team-label
+  uid: test-uid-required-labels
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"]
+    namespaces:
+      - production
+      - staging
+    excludedNamespaces:
+      - kube-system
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/managed-by: helm
+  parameters:
+    labels:
+      - key: team
+        allowedRegex: "^[a-z]+-team$"

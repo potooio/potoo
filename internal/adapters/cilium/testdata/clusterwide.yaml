@@ -1,0 +1,10 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: default-deny-external
+  uid: test-uid-5
+spec:
+  endpointSelector: {}
+  egressDeny:
+    - toEntities:
+        - world

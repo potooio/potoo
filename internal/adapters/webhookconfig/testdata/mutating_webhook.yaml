@@ -1,0 +1,22 @@
+# EXPECT: 1 constraint, type=Admission
+# EXPECT: Severity=Info (failurePolicy=Ignore)
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: sidecar-injector
+webhooks:
+- name: sidecar.example.com
+  failurePolicy: Ignore
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    operations: ["CREATE"]
+    resources: ["pods"]
+  clientConfig:
+    service:
+      name: sidecar-injector
+      namespace: kube-system
+      path: /mutate
+    caBundle: LS0tLS...
+  admissionReviewVersions: ["v1"]
+  sideEffects: NoneOnDryRun

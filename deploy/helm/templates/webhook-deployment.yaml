@@ -1,0 +1,101 @@
+{{- if .Values.admissionWebhook.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "potoo.fullname" . }}-webhook
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "potoo.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webhook
+spec:
+  replicas: {{ .Values.admissionWebhook.replicas }}
+  selector:
+    matchLabels:
+      {{- include "potoo.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webhook
+  template:
+    metadata:
+      labels:
+        {{- include "potoo.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: webhook
+    spec:
+      serviceAccountName: {{ include "potoo.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: webhook
+          image: "{{ .Values.admissionWebhook.image.repository }}:{{ .Values.admissionWebhook.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.admissionWebhook.image.pullPolicy }}
+          command:
+            - /app
+          args:
+            - --addr=:8443
+            - --controller-url=http://{{ include "potoo.fullname" . }}.{{ .Release.Namespace }}.svc:8080
+            - --namespace={{ .Release.Namespace }}
+            {{- if eq .Values.admissionWebhook.certManagement "self-signed" }}
+            - --self-signed=true
+            {{- else }}
+            - --self-signed=false
+            - --tls-cert-file=/etc/webhook/certs/tls.crt
+            - --tls-key-file=/etc/webhook/certs/tls.key
+            {{- end }}
+          ports:
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.admissionWebhook.resources | nindent 12 }}
+          {{- if ne .Values.admissionWebhook.certManagement "self-signed" }}
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/webhook/certs
+              readOnly: true
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+      {{- if ne .Values.admissionWebhook.certManagement "self-signed" }}
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: {{ include "potoo.fullname" . }}-webhook-tls
+      {{- end }}
+      {{- with .Values.controller.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.controller.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "potoo.selectorLabels" . | nindent 20 }}
+                    app.kubernetes.io/component: webhook
+                topologyKey: kubernetes.io/hostname
+{{- end }}

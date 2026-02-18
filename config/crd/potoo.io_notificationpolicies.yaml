@@ -1,0 +1,214 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: notificationpolicies.potoo.io
+spec:
+  group: potoo.io
+  names:
+    kind: NotificationPolicy
+    listKind: NotificationPolicyList
+    plural: notificationpolicies
+    shortNames:
+    - np
+    singular: notificationpolicy
+  scope: Cluster
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: |-
+          NotificationPolicy configures how notifications are delivered and what
+          detail level is visible to each audience.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              channels:
+                description: Channels configures external notification delivery.
+                properties:
+                  slack:
+                    description: Slack configuration for external notifications.
+                    properties:
+                      enabled:
+                        type: boolean
+                      minSeverity:
+                        description: MinSeverity is the minimum severity to trigger
+                          Slack notifications.
+                        enum:
+                        - Critical
+                        - Warning
+                        - Info
+                        type: string
+                      webhookUrl:
+                        type: string
+                    required:
+                    - enabled
+                    - webhookUrl
+                    type: object
+                  webhook:
+                    description: Webhook configuration for generic HTTP POST notifications.
+                    properties:
+                      authSecretRef:
+                        description: |-
+                          AuthSecretRef references a Secret containing an auth token for webhook requests.
+                          The Secret value is sent as a Bearer token in the Authorization header.
+                        properties:
+                          key:
+                            description: Key is the key within the Secret data.
+                            type: string
+                          name:
+                            description: Name is the name of the Secret.
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                      enabled:
+                        type: boolean
+                      insecureSkipVerify:
+                        description: InsecureSkipVerify disables TLS certificate verification.
+                        type: boolean
+                      minSeverity:
+                        description: MinSeverity is the minimum severity to trigger
+                          webhook notifications.
+                        enum:
+                        - Critical
+                        - Warning
+                        - Info
+                        type: string
+                      timeoutSeconds:
+                        description: 'TimeoutSeconds is the HTTP request timeout.
+                          Default: 10.'
+                        maximum: 60
+                        minimum: 1
+                        type: integer
+                      url:
+                        type: string
+                    required:
+                    - enabled
+                    - url
+                    type: object
+                type: object
+              developerScope:
+                description: DeveloperScope controls what developers see in their
+                  own namespace.
+                properties:
+                  contact:
+                    description: Contact is the default contact for remediation (e.g.,
+                      email, Slack channel).
+                    type: string
+                  maxDetailLevel:
+                    description: MaxDetailLevel caps the detail level for this scope.
+                    enum:
+                    - summary
+                    - detailed
+                    - full
+                    type: string
+                  showAffectedPorts:
+                    description: ShowAffectedPorts includes specific port numbers
+                      in notifications.
+                    type: boolean
+                  showConstraintName:
+                    description: |-
+                      ShowConstraintName controls constraint name visibility.
+                      "same-namespace-only" = only show name if constraint is in the recipient's namespace.
+                      "all" = show all constraint names.
+                      "none" = never show constraint names.
+                    enum:
+                    - none
+                    - same-namespace-only
+                    - all
+                    type: string
+                  showConstraintType:
+                    description: ShowConstraintType includes the constraint type in
+                      notifications.
+                    type: boolean
+                  showRemediationContact:
+                    description: ShowRemediationContact includes contact information
+                      in notifications.
+                    type: boolean
+                required:
+                - maxDetailLevel
+                - showAffectedPorts
+                - showConstraintName
+                - showConstraintType
+                - showRemediationContact
+                type: object
+              platformAdminRoles:
+                description: PlatformAdminRoles identifies which ClusterRoles are
+                  considered platform admin.
+                items:
+                  type: string
+                type: array
+              platformAdminScope:
+                description: PlatformAdminScope controls what platform admins see.
+                properties:
+                  contact:
+                    description: Contact is the default contact for remediation (e.g.,
+                      email, Slack channel).
+                    type: string
+                  maxDetailLevel:
+                    description: MaxDetailLevel caps the detail level for this scope.
+                    enum:
+                    - summary
+                    - detailed
+                    - full
+                    type: string
+                  showAffectedPorts:
+                    description: ShowAffectedPorts includes specific port numbers
+                      in notifications.
+                    type: boolean
+                  showConstraintName:
+                    description: |-
+                      ShowConstraintName controls constraint name visibility.
+                      "same-namespace-only" = only show name if constraint is in the recipient's namespace.
+                      "all" = show all constraint names.
+                      "none" = never show constraint names.
+                    enum:
+                    - none
+                    - same-namespace-only
+                    - all
+                    type: string
+                  showConstraintType:
+                    description: ShowConstraintType includes the constraint type in
+                      notifications.
+                    type: boolean
+                  showRemediationContact:
+                    description: ShowRemediationContact includes contact information
+                      in notifications.
+                    type: boolean
+                required:
+                - maxDetailLevel
+                - showAffectedPorts
+                - showConstraintName
+                - showConstraintType
+                - showRemediationContact
+                type: object
+            required:
+            - developerScope
+            - platformAdminScope
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true

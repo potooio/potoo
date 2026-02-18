@@ -1,0 +1,12 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: permissive-mtls
+  namespace: production
+  uid: pa-permissive-001
+spec:
+  selector:
+    matchLabels:
+      app: legacy
+  mtls:
+    mode: PERMISSIVE

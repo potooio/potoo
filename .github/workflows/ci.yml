@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Makefile'
+      - 'Dockerfile'
+      - '.golangci.yml'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Makefile'
+      - 'Dockerfile'
+      - '.golangci.yml'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: '1.25.7'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Check formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "::error::Files not formatted with gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.8
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Build controller
+        run: go build -o bin/controller ./cmd/controller/
+
+      - name: Build webhook
+        run: go build -o bin/webhook ./cmd/webhook/
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Install gotestsum
+        run: go install gotest.tools/gotestsum@latest
+
+      - name: Run tests
+        run: |
+          gotestsum \
+            --junitfile junit.xml \
+            --format pkgname \
+            -- -coverprofile=cover.out -covermode=atomic -race ./...
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: cover.out
+          fail_ci_if_error: false
+
+      - name: Test summary
+        if: always()
+        uses: test-summary/action@v2
+        with:
+          paths: junit.xml

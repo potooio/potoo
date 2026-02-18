@@ -1,0 +1,18 @@
+# EXPECT: 1 constraint
+# EXPECT: Severity=Warning (from annotation)
+# EXPECT: Summary from annotation
+# EXPECT: ConstraintType=Admission (from annotation)
+apiVersion: custom.io/v1
+kind: PolicyRule
+metadata:
+  name: annotated-rule
+  namespace: team-beta
+  annotations:
+    potoo.io/summary: "Custom policy blocks unapproved images"
+    potoo.io/severity: "Warning"
+    potoo.io/constraint-type: "Admission"
+spec:
+  parameters:
+    allowedRegistries:
+    - gcr.io
+    - docker.io

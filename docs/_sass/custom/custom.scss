@@ -1,0 +1,13 @@
+// Custom styles for Potoo docs
+
+// Make the logo larger in the sidebar
+.site-logo img {
+  max-width: 100% !important;
+  max-height: 150px !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+.site-title {
+  padding-top: 0.5rem;
+}

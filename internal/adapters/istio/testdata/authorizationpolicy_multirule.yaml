@@ -1,0 +1,26 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: complex-policy
+  namespace: production
+  uid: ap-multi-001
+spec:
+  action: DENY
+  rules:
+    - from:
+        - source:
+            namespaces:
+              - external
+            principals:
+              - cluster.local/ns/external/sa/crawler
+      to:
+        - operation:
+            methods:
+              - POST
+              - PUT
+            paths:
+              - /api/v1/*
+    - from:
+        - source:
+            namespaces:
+              - staging
