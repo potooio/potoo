@@ -32,7 +32,7 @@ aux_links:
 aux_links_new_tab: true
 
 # Color scheme
-color_scheme: dark
+color_scheme: potoo
 
 # Code highlighting
 highlighter: rouge
@@ -57,6 +57,9 @@ defaults:
 
 # Navigation structure (just-the-docs)
 nav_external_links:
+  - title: Home
+    url: https://potoo.io
+    hide_icon: true
   - title: GitHub
     url: https://github.com/potooio/potoo
     hide_icon: false
