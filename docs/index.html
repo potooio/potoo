@@ -6,11 +6,13 @@ search_exclude: true
 ---
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Potoo - Catching bugs in the dark</title>
-  <meta name="description" content="Kubernetes constraint discovery and explanation. Potoo finds every policy blocking your workloads and tells developers why.">
+  <title>Potoo - In the dark, catching bugs before they bite</title>
+  <meta name="description"
+    content="Kubernetes constraint discovery and explanation. Potoo finds every policy blocking your workloads and tells developers why.">
   <style>
     :root {
       --bg: #0d1117;
@@ -26,7 +28,11 @@ search_exclude: true
       --terminal-border: #30363d;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -45,6 +51,7 @@ search_exclude: true
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
+
     .nav-inner {
       max-width: 1200px;
       margin: 0 auto;
@@ -53,6 +60,7 @@ search_exclude: true
       align-items: center;
       justify-content: space-between;
     }
+
     .nav-brand {
       display: flex;
       align-items: center;
@@ -62,15 +70,27 @@ search_exclude: true
       font-weight: 600;
       font-size: 1.1rem;
     }
-    .nav-brand img { height: 28px; }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+    .nav-brand img {
+      height: 28px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 0.9rem;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--text); }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
 
     /* HERO */
     .hero {
@@ -84,6 +104,7 @@ search_exclude: true
       position: relative;
       overflow: hidden;
     }
+
     .hero::before {
       content: '';
       position: absolute;
@@ -95,36 +116,42 @@ search_exclude: true
       background: radial-gradient(ellipse, rgba(88, 166, 255, 0.08) 0%, transparent 70%);
       pointer-events: none;
     }
+
     .hero-logo {
       width: 120px;
       height: auto;
       margin-bottom: 1.5rem;
       filter: invert(1);
     }
+
     .hero h1 {
       font-size: 3.5rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 0.5rem;
     }
+
     .hero .tagline {
       font-size: 1.5rem;
       color: var(--text-muted);
       font-style: italic;
       margin-bottom: 1rem;
     }
+
     .hero .subtitle {
       font-size: 1.15rem;
       color: var(--text-muted);
       max-width: 600px;
       margin-bottom: 2.5rem;
     }
+
     .hero-ctas {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .btn {
       display: inline-block;
       padding: 0.75rem 1.75rem;
@@ -134,16 +161,22 @@ search_exclude: true
       text-decoration: none;
       transition: all 0.2s;
     }
+
     .btn-primary {
       background: var(--accent);
       color: #fff;
     }
-    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
     .btn-outline {
       border: 1px solid var(--border);
       color: var(--text);
       background: transparent;
     }
+
     .btn-outline:hover {
       border-color: var(--text-muted);
       background: var(--bg-raised);
@@ -155,6 +188,7 @@ search_exclude: true
       margin: 0 auto;
       padding: 5rem 2rem;
     }
+
     .section-label {
       font-size: 0.8rem;
       font-weight: 600;
@@ -163,12 +197,14 @@ search_exclude: true
       color: var(--accent);
       margin-bottom: 0.75rem;
     }
+
     .section-title {
       font-size: 2.25rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       margin-bottom: 1rem;
     }
+
     .section-desc {
       font-size: 1.1rem;
       color: var(--text-muted);
@@ -180,25 +216,30 @@ search_exclude: true
     .problem {
       border-top: 1px solid var(--border);
     }
+
     .problem-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
+
     .problem-card {
       background: var(--bg-raised);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1.5rem;
     }
+
     .problem-card h3 {
       font-size: 1rem;
       margin-bottom: 0.5rem;
     }
+
     .problem-card p {
       color: var(--text-muted);
       font-size: 0.95rem;
     }
+
     .problem-card code {
       font-family: 'SF Mono', 'Fira Code', monospace;
       background: var(--bg);
@@ -209,7 +250,10 @@ search_exclude: true
     }
 
     /* TERMINAL */
-    .demo { border-top: 1px solid var(--border); }
+    .demo {
+      border-top: 1px solid var(--border);
+    }
+
     .terminal {
       background: var(--terminal-bg);
       border: 1px solid var(--terminal-border);
@@ -217,6 +261,7 @@ search_exclude: true
       overflow: hidden;
       max-width: 720px;
     }
+
     .terminal-header {
       background: var(--bg-raised);
       padding: 0.6rem 1rem;
@@ -225,17 +270,20 @@ search_exclude: true
       gap: 0.5rem;
       border-bottom: 1px solid var(--border);
     }
+
     .terminal-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: var(--border);
     }
+
     .terminal-title {
       color: var(--text-muted);
       font-size: 0.8rem;
       margin-left: 0.5rem;
     }
+
     .terminal-body {
       padding: 1.25rem;
       font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -243,26 +291,49 @@ search_exclude: true
       line-height: 1.7;
       overflow-x: auto;
     }
-    .terminal-body .prompt { color: var(--green); }
-    .terminal-body .cmd { color: var(--text); }
-    .terminal-body .dim { color: var(--text-muted); }
-    .terminal-body .highlight { color: var(--accent); }
-    .terminal-body .warn { color: #d29922; }
-    .terminal-body .err { color: #f85149; }
+
+    .terminal-body .prompt {
+      color: var(--green);
+    }
+
+    .terminal-body .cmd {
+      color: var(--text);
+    }
+
+    .terminal-body .dim {
+      color: var(--text-muted);
+    }
+
+    .terminal-body .highlight {
+      color: var(--accent);
+    }
+
+    .terminal-body .warn {
+      color: #d29922;
+    }
+
+    .terminal-body .err {
+      color: #f85149;
+    }
 
     /* FEATURES */
-    .features { border-top: 1px solid var(--border); }
+    .features {
+      border-top: 1px solid var(--border);
+    }
+
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
     }
+
     .feature-card {
       background: var(--bg-raised);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1.75rem;
     }
+
     .feature-icon {
       width: 40px;
       height: 40px;
@@ -275,26 +346,33 @@ search_exclude: true
       background: rgba(88, 166, 255, 0.1);
       border: 1px solid rgba(88, 166, 255, 0.2);
     }
+
     .feature-card h3 {
       font-size: 1.05rem;
       margin-bottom: 0.5rem;
     }
+
     .feature-card p {
       color: var(--text-muted);
       font-size: 0.9rem;
     }
 
     /* HOW IT WORKS */
-    .how-it-works { border-top: 1px solid var(--border); }
+    .how-it-works {
+      border-top: 1px solid var(--border);
+    }
+
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 2rem;
       position: relative;
     }
+
     .step {
       text-align: center;
     }
+
     .step-number {
       width: 48px;
       height: 48px;
@@ -308,18 +386,28 @@ search_exclude: true
       color: var(--accent);
       margin-bottom: 1rem;
     }
+
     .step h3 {
       font-size: 1rem;
       margin-bottom: 0.5rem;
     }
+
     .step p {
       color: var(--text-muted);
       font-size: 0.9rem;
     }
 
     /* INSTALL */
-    .install { border-top: 1px solid var(--border); text-align: center; }
-    .install .section-desc { margin-left: auto; margin-right: auto; }
+    .install {
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .install .section-desc {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .install-cmd {
       display: inline-block;
       background: var(--bg-raised);
@@ -332,7 +420,10 @@ search_exclude: true
       text-align: left;
       color: var(--text-muted);
     }
-    .install-cmd .cmd { color: var(--text); }
+
+    .install-cmd .cmd {
+      color: var(--text);
+    }
 
     /* FOOTER */
     footer {
@@ -340,10 +431,12 @@ search_exclude: true
       padding: 3rem 2rem;
       text-align: center;
     }
+
     .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
     }
+
     .footer-links {
       display: flex;
       gap: 2rem;
@@ -351,13 +444,18 @@ search_exclude: true
       margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
+
     .footer-links a {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 0.9rem;
       transition: color 0.2s;
     }
-    .footer-links a:hover { color: var(--text); }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
     .footer-copy {
       color: var(--text-muted);
       font-size: 0.8rem;
@@ -365,13 +463,25 @@ search_exclude: true
 
     /* RESPONSIVE */
     @media (max-width: 640px) {
-      .hero h1 { font-size: 2.5rem; }
-      .hero .tagline { font-size: 1.2rem; }
-      .section-title { font-size: 1.75rem; }
-      .nav-links { gap: 1rem; }
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero .tagline {
+        font-size: 1.2rem;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <nav>
@@ -394,7 +504,8 @@ search_exclude: true
     <h1>Potoo</h1>
     <p class="tagline">Catching bugs in the dark.</p>
     <p class="subtitle">
-      Every policy blocking your Kubernetes workloads &mdash; discovered, correlated, and explained to the developers who need it.
+      Every policy blocking your Kubernetes workloads &mdash; discovered, correlated, and explained to the developers
+      who need it.
     </p>
     <div class="hero-ctas">
       <a href="/docs/getting-started/" class="btn btn-primary">Get Started</a>
@@ -407,20 +518,24 @@ search_exclude: true
     <p class="section-label">The Problem</p>
     <h2 class="section-title">Your cluster is full of hidden constraints</h2>
     <p class="section-desc">
-      NetworkPolicies, Gatekeeper constraints, Kyverno policies, Istio rules, resource quotas, webhooks. When something blocks a deploy, developers get cryptic errors and no answers.
+      NetworkPolicies, Gatekeeper constraints, Kyverno policies, Istio rules, resource quotas, webhooks. When something
+      blocks a deploy, developers get cryptic errors and no answers.
     </p>
     <div class="problem-grid">
       <div class="problem-card">
         <h3>Scattered across engines</h3>
-        <p>Policies live in Cilium, Gatekeeper, Kyverno, Istio, native K8s, and custom CRDs. No single tool shows them all.</p>
+        <p>Policies live in Cilium, Gatekeeper, Kyverno, Istio, native K8s, and custom CRDs. No single tool shows them
+          all.</p>
       </div>
       <div class="problem-card">
         <h3>Cryptic error messages</h3>
-        <p>Developers see <code>connection timed out</code> or <code>webhook denied the request</code> with zero context about which policy caused it.</p>
+        <p>Developers see <code>connection timed out</code> or <code>webhook denied the request</code> with zero context
+          about which policy caused it.</p>
       </div>
       <div class="problem-card">
         <h3>Cross-team friction</h3>
-        <p>Platform teams write policies. App teams hit them. The debugging loop burns hours and goodwill on both sides.</p>
+        <p>Platform teams write policies. App teams hit them. The debugging loop burns hours and goodwill on both sides.
+        </p>
       </div>
     </div>
   </section>
@@ -429,7 +544,8 @@ search_exclude: true
     <p class="section-label">The Solution</p>
     <h2 class="section-title">Ask Potoo what went wrong</h2>
     <p class="section-desc">
-      Potoo watches every policy-related resource in your cluster. When something breaks, it tells developers exactly what happened and how to fix it.
+      Potoo watches every policy-related resource in your cluster. When something breaks, it tells developers exactly
+      what happened and how to fix it.
     </p>
     <div class="terminal">
       <div class="terminal-header">
@@ -441,13 +557,15 @@ search_exclude: true
       <div class="terminal-body">
         <span class="prompt">$</span> <span class="cmd">potoo explain -n payments "connection timed out"</span>
         <br><br>
-        <span class="highlight">Explanation:</span> <span class="dim">Network egress is restricted in this namespace.</span>
+        <span class="highlight">Explanation:</span> <span class="dim">Network egress is restricted in this
+          namespace.</span>
         <br>
         <span class="highlight">Confidence:</span> <span class="dim">high</span>
         <br><br>
         <span class="highlight">Matching Constraints:</span>
         <br>
-        <span class="dim">&nbsp;&nbsp;</span><span class="err">&#x25cf;</span> <span class="cmd">restrict-egress</span> <span class="dim">(NetworkPolicy) &mdash; Severity: Critical</span>
+        <span class="dim">&nbsp;&nbsp;</span><span class="err">&#x25cf;</span> <span class="cmd">restrict-egress</span>
+        <span class="dim">(NetworkPolicy) &mdash; Severity: Critical</span>
         <br>
         <span class="dim">&nbsp;&nbsp;&nbsp;&nbsp;Restricts egress to ports 443, 8443 only</span>
         <br><br>
@@ -469,42 +587,65 @@ search_exclude: true
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
         </div>
         <h3>Universal Discovery</h3>
-        <p>Finds constraints from NetworkPolicy, Cilium, Gatekeeper, Kyverno, Istio, webhooks, and any custom CRD you register.</p>
+        <p>Finds constraints from NetworkPolicy, Cilium, Gatekeeper, Kyverno, Istio, webhooks, and any custom CRD you
+          register.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
         </div>
         <h3>Developer Notifications</h3>
         <p>K8s Events on affected workloads, ConstraintReport CRDs, Slack integration, and workload annotations.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
         </div>
         <h3>Privacy-Aware</h3>
-        <p>Multi-tenant safe. Developers see what they need to unblock themselves. Cross-namespace details stay hidden.</p>
+        <p>Multi-tenant safe. Developers see what they need to unblock themselves. Cross-namespace details stay hidden.
+        </p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+          </svg>
         </div>
         <h3>AI Agent Integration</h3>
-        <p>Built-in MCP server lets Claude, Copilot, and other AI assistants query constraints and explain errors directly.</p>
+        <p>Built-in MCP server lets Claude, Copilot, and other AI assistants query constraints and explain errors
+          directly.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
         </div>
         <h3>Pre-Flight Checks</h3>
         <p>Validate manifests before deploying. Know which policies would block your workload before kubectl apply.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" x2="8" y1="13" y2="13" />
+            <line x1="16" x2="8" y1="17" y2="17" />
+          </svg>
         </div>
         <h3>ConstraintReport CRDs</h3>
         <p>Machine-readable reports per namespace. Query with kubectl, pipe to dashboards, or feed to automation.</p>
@@ -515,12 +656,14 @@ search_exclude: true
   <section class="how-it-works">
     <p class="section-label">How It Works</p>
     <h2 class="section-title">Watches everything, explains what matters</h2>
-    <p class="section-desc">Potoo runs as a controller in your cluster. No sidecars, no agents on nodes, no policy changes.</p>
+    <p class="section-desc">Potoo runs as a controller in your cluster. No sidecars, no agents on nodes, no policy
+      changes.</p>
     <div class="steps">
       <div class="step">
         <div class="step-number">1</div>
         <h3>Discover</h3>
-        <p>Watches all policy CRDs in the cluster via dynamic informers. Adapters normalize each type into a common model.</p>
+        <p>Watches all policy CRDs in the cluster via dynamic informers. Adapters normalize each type into a common
+          model.</p>
       </div>
       <div class="step">
         <div class="step-number">2</div>
@@ -571,4 +714,5 @@ search_exclude: true
   </footer>
 
 </body>
+
 </html>
