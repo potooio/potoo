@@ -8,6 +8,10 @@ url: "https://potoo.io"
 
 remote_theme: just-the-docs/just-the-docs@v0.8.2
 
+# Ensure Helm chart repo files are served as static assets
+include:
+  - charts
+
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag

@@ -29,6 +29,7 @@ Potoo uses three CRDs to store and configure constraint data.
 CRDs are installed automatically by the Helm chart:
 
 ```bash
+helm repo add potoo https://potoo.io/charts
 helm install potoo potoo/potoo -n potoo-system --create-namespace
 ```
 

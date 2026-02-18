@@ -33,6 +33,14 @@ helm install potoo potoo/potoo \
   --create-namespace
 ```
 
+Alternatively, install directly from the OCI registry (Helm 3.8+):
+
+```bash
+helm install potoo oci://ghcr.io/potooio/charts/potoo \
+  -n potoo-system \
+  --create-namespace
+```
+
 This installs:
 - Controller with 2 replicas (leader election enabled)
 - Admission webhook with 2 replicas

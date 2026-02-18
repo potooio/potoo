@@ -21,9 +21,15 @@ This chart deploys:
 
 ```bash
 helm repo add potoo https://potoo.io/charts
-helm repo update
-
 helm install potoo potoo/potoo \
+  -n potoo-system \
+  --create-namespace
+```
+
+Or install directly from OCI registry (Helm 3.8+):
+
+```bash
+helm install potoo oci://ghcr.io/potooio/charts/potoo \
   -n potoo-system \
   --create-namespace
 ```

@@ -31,11 +31,8 @@ A 5-minute hands-on introduction to Potoo.
 ## Step 1: Install Potoo
 
 ```bash
-# Add Helm repo
+# Add Helm repo and install
 helm repo add potoo https://potoo.io/charts
-helm repo update
-
-# Install
 helm install potoo potoo/potoo \
   -n potoo-system \
   --create-namespace
@@ -125,12 +122,12 @@ You'll see both the NetworkPolicy and ResourceQuota represented as constraints.
 
 ```bash
 # Download binary (Linux amd64)
-curl -sL https://github.com/potooio/docs/releases/latest/download/potooctl-linux-amd64 -o potoo
+curl -sL https://github.com/potooio/potoo/releases/latest/download/potooctl-linux-amd64 -o potoo
 chmod +x potoo
 sudo mv potoo /usr/local/bin/
 
 # Or via Go (requires Go 1.21+)
-# go install github.com/potooio/docs/cmd/potooctl@latest
+# go install github.com/potooio/potoo/cmd/potooctl@latest
 ```
 
 {: .note }

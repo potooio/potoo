@@ -344,3 +344,47 @@ jobs:
           generate_release_notes: true
           prerelease: ${{ needs.validate.outputs.is_prerelease == 'true' }}
           files: dist/*
+
+  # ---------------------------------------------------------------------------
+  # Job 7: Update Helm repo index on GitHub Pages
+  # ---------------------------------------------------------------------------
+  chart-repo:
+    name: Update Helm Repo Index
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate, release]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Download chart artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: helm-chart
+          path: .cr-release-packages/
+
+      - name: Update index.yaml
+        run: |
+          mkdir -p docs/charts
+          RELEASE_URL="https://github.com/potooio/potoo/releases/download/${{ needs.validate.outputs.version_tag }}"
+          if [ -f docs/charts/index.yaml ]; then
+            helm repo index .cr-release-packages/ --url "$RELEASE_URL" --merge docs/charts/index.yaml
+          else
+            helm repo index .cr-release-packages/ --url "$RELEASE_URL"
+          fi
+          mv .cr-release-packages/index.yaml docs/charts/index.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/charts/index.yaml
+          git commit -m "chore: update Helm repo index for ${{ needs.validate.outputs.version_tag }}"
+          git push

@@ -52,7 +52,7 @@ import (
 
     "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
     "k8s.io/apimachinery/pkg/runtime/schema"
-    "github.com/potooio/docs/internal/types"
+    "github.com/potooio/potoo/internal/types"
 )
 
 type Adapter struct{}

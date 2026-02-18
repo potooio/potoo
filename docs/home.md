@@ -131,12 +131,12 @@ Then install the CLI:
 
 ```bash
 # Download binary (Linux amd64)
-curl -sL https://github.com/potooio/docs/releases/latest/download/potooctl-linux-amd64 -o potoo
+curl -sL https://github.com/potooio/potoo/releases/latest/download/potooctl-linux-amd64 -o potoo
 chmod +x potoo
 sudo mv potoo /usr/local/bin/
 
 # Or via Go (requires Go 1.21+)
-# go install github.com/potooio/docs/cmd/potooctl@latest
+# go install github.com/potooio/potoo/cmd/potooctl@latest
 ```
 
 See the [Installation Guide](/docs/getting-started/installation/) for macOS, Windows, and other platforms.
