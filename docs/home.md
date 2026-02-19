@@ -8,7 +8,6 @@ permalink: /docs/
 
 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
   <img src="{{ '/assets/images/potoo-xparent.png' | relative_url }}" alt="Potoo" style="height: 100px; filter: invert(1);">
-  <h1 class="fs-9" style="margin: 0;">Potoo</h1>
 </div>
 
 Automatic constraint discovery and explanation for Kubernetes.
