@@ -4,7 +4,7 @@
 [![Security Scan](https://github.com/potooio/potoo/actions/workflows/security.yml/badge.svg)](https://github.com/potooio/potoo/actions/workflows/security.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/potooio/potoo)](https://goreportcard.com/report/github.com/potooio/potoo)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/potooio/potoo)](https://github.com/potooio/potoo/blob/master/go.mod)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](https://mariadb.com/bsl11/)
 
 **Automatic constraint discovery and developer notification for Kubernetes.**
 
@@ -143,4 +143,4 @@ See [Agent Outputs](docs/AGENT_OUTPUTS.md) for full design documentation.
 
 ## License
 
-Apache License 2.0 — See [LICENSE](LICENSE).
+BSL 1.1 — See [LICENSE](LICENSE).

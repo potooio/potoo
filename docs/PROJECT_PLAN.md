@@ -28,7 +28,7 @@ Potoo is delivered in 7 phases. Each phase is independently useful — Phase 1 a
 - Controller namespace: `potoo-system`
 - Helm chart name: `potoo`
 - Go module path: `github.com/potooio/potoo`
-- License: Apache 2.0
+- License: BSL 1.1
 
 ### Exit Criteria
 - `make build` produces a working binary

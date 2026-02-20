@@ -151,7 +151,7 @@ rescan cycle indefinitely. Default 30s matches controller-runtime.
 
 ## Developer Certificate of Origin
 
-All contributions must include a sign-off indicating you have the right to submit the code under the Apache 2.0 license:
+All contributions must include a sign-off indicating you have the right to submit the code under the BSL 1.1 license:
 
 ```bash
 git commit -s -m "Add new feature"
@@ -160,7 +160,7 @@ git commit -s -m "Add new feature"
 This adds a `Signed-off-by` line to your commit. By signing off, you certify:
 
 1. You wrote the code, or have the right to submit it
-2. You have the right to submit it under Apache 2.0
+2. You have the right to submit it under BSL 1.1
 3. You understand this contribution is public and maintained indefinitely
 
 See [developercertificate.org](https://developercertificate.org/) for the full DCO text.
