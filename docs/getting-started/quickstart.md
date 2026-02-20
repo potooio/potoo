@@ -131,7 +131,7 @@ sudo mv potoo /usr/local/bin/
 ```
 
 {: .note }
-> See the [Installation Guide](../installation/#cli-installation) for macOS, Windows, and other platforms.
+> See the [Installation Guide](installation.html#cli-installation) for macOS, Windows, and other platforms.
 
 ```bash
 # Query constraints
@@ -265,6 +265,6 @@ kubectl delete namespace potoo-system
 ## What's Next?
 
 - [CLI Reference](/docs/cli/) - Full command documentation
-- [Controller Configuration](/docs/controller/configuration/) - Customize behavior
+- [Controller Configuration](/docs/controller/configuration.html) - Customize behavior
 - [MCP Server](/docs/mcp/) - Integrate with AI coding assistants
 - [CRDs](/docs/crds/) - Understand the data model

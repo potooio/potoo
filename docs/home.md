@@ -84,7 +84,7 @@ When constraints block workloads, developers receive actionable notifications:
 
 ### Privacy-Aware Design
 
-Multi-tenant clusters need information boundaries. Potoo's [privacy model](/docs/reference/privacy/) ensures:
+Multi-tenant clusters need information boundaries. Potoo's [privacy model](/docs/controller/notifications.html#privacy-and-detail-levels) ensures:
 
 - Developers see what they need to unblock themselves
 - Cross-namespace policy details stay hidden
@@ -138,7 +138,7 @@ sudo mv potoo /usr/local/bin/
 # go install github.com/potooio/potoo/cmd/potooctl@latest
 ```
 
-See the [Installation Guide](/docs/getting-started/installation/) for macOS, Windows, and other platforms.
+See the [Installation Guide](/docs/getting-started/installation.html) for macOS, Windows, and other platforms.
 
 ---
 

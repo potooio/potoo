@@ -95,4 +95,4 @@ test/e2e/              End-to-end tests against a real cluster
 
 ## What's Next
 
-- [E2E Testing](e2e-testing/) - Run end-to-end tests locally
+- [E2E Testing](e2e-testing.html) - Run end-to-end tests locally

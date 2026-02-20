@@ -163,9 +163,9 @@ The controller exposes Prometheus metrics on port 8080:
 
 ## What's Next
 
-- [Configuration](configuration/) - Helm values reference
-- [Adapters](adapters/) - Enable/disable policy engines
-- [Missing Resources](missing-resources/) - Detection of missing companion resources
-- [Notifications](notifications/) - Slack, webhooks, Events
-- [Admission Webhook](webhook/) - Deploy-time warnings
-- [HTTP API](http-api/) - REST API endpoints for capabilities, constraints, and health
+- [Configuration](configuration.html) - Helm values reference
+- [Adapters](adapters.html) - Enable/disable policy engines
+- [Missing Resources](missing-resources.html) - Detection of missing companion resources
+- [Notifications](notifications.html) - Slack, webhooks, Events
+- [Admission Webhook](webhook.html) - Deploy-time warnings
+- [HTTP API](http-api.html) - REST API endpoints for capabilities, constraints, and health

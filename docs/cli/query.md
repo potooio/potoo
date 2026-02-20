@@ -207,6 +207,6 @@ The JSON output includes remediation information when available:
 
 ## See Also
 
-- [explain](../explain/) - Match errors to constraints
-- [check](../check/) - Pre-check manifests
-- [remediate](../remediate/) - Get remediation for a specific constraint
+- [explain](explain.html) - Match errors to constraints
+- [check](check.html) - Pre-check manifests
+- [remediate](remediate.html) - Get remediation for a specific constraint

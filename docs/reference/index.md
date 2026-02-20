@@ -18,8 +18,8 @@ Technical reference documentation for Potoo.
 
 | Topic | Description |
 |-------|-------------|
-| [Constraint Types](constraint-types/) | NetworkIngress, NetworkEgress, Admission, ResourceLimit, MeshPolicy, MissingResource |
-| [Severity Levels](severity-levels/) | Critical, Warning, Info definitions and thresholds |
+| [Constraint Types](constraint-types.html) | NetworkIngress, NetworkEgress, Admission, ResourceLimit, MeshPolicy, MissingResource |
+| [Severity Levels](severity-levels.html) | Critical, Warning, Info definitions and thresholds |
 
 ---
 

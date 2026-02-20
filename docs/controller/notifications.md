@@ -332,7 +332,7 @@ Webhook payloads use **summary-level** privacy scoping by default (matching deve
 - Cross-namespace details are not included
 - Generic remediation guidance is provided
 
-See [Privacy Model](/docs/reference/privacy/) for details on what each level includes.
+See [Privacy Model](/docs/crds/notificationpolicy.html#privacy-model-reference) for details on what each level includes.
 
 ### Authentication
 

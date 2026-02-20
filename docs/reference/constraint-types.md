@@ -254,7 +254,7 @@ A resource that should exist (based on annotations or conventions) is missing.
 - Missing PeerAuthentication (for namespaces with Istio injection enabled)
 - Missing ClusterIssuer/Issuer (for workloads with cert-manager annotations)
 
-See [Missing Resource Detection](/docs/controller/missing-resources/) for the full list of built-in rules and their detection logic.
+See [Missing Resource Detection](/docs/controller/missing-resources.html) for the full list of built-in rules and their detection logic.
 
 ### Effects
 - `missing` - Required resource doesn't exist

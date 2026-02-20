@@ -85,7 +85,7 @@ Query constraints affecting a namespace.
 ```
 
 {: .note }
-> For `ResourceLimit` constraints, the response includes a `metrics` field with resource usage data. See the [metrics example in the Resources reference](/docs/mcp/resources/#metrics-resourcelimit-only) for the full schema.
+> For `ResourceLimit` constraints, the response includes a `metrics` field with resource usage data. See the [metrics example in the Resources reference](/docs/mcp/resources.html#metrics-resourcelimit-only) for the full schema.
 
 ### Constraint Types
 

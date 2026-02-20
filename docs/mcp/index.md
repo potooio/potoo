@@ -137,13 +137,13 @@ MCP tools are functions that agents can call:
 
 | Tool | Description |
 |------|-------------|
-| [potoo_query](tools/#potoo_query) | Query constraints in a namespace |
-| [potoo_explain](tools/#potoo_explain) | Match error to constraints |
-| [potoo_check](tools/#potoo_check) | Pre-check a manifest |
-| [potoo_list_namespaces](tools/#potoo_list_namespaces) | List namespaces with constraints |
-| [potoo_remediation](tools/#potoo_remediation) | Get remediation for a constraint |
+| [potoo_query](tools.html#potoo_query) | Query constraints in a namespace |
+| [potoo_explain](tools.html#potoo_explain) | Match error to constraints |
+| [potoo_check](tools.html#potoo_check) | Pre-check a manifest |
+| [potoo_list_namespaces](tools.html#potoo_list_namespaces) | List namespaces with constraints |
+| [potoo_remediation](tools.html#potoo_remediation) | Get remediation for a constraint |
 
-See [Tools Reference](tools/) for details.
+See [Tools Reference](tools.html) for details.
 
 ---
 
@@ -153,12 +153,12 @@ MCP resources are data endpoints that agents can read:
 
 | Resource | Path | Description |
 |----------|------|-------------|
-| [reports](resources/#reports) | `/resources/reports/{namespace}` | Full constraint report |
-| [constraints](resources/#constraints) | `/resources/constraints/{namespace}/{name}` | Single constraint |
-| [health](resources/#health) | `/resources/health` | Controller health status |
-| [capabilities](resources/#capabilities) | `/resources/capabilities` | Enabled features |
+| [reports](resources.html#reports) | `/resources/reports/{namespace}` | Full constraint report |
+| [constraints](resources.html#constraints) | `/resources/constraints/{namespace}/{name}` | Single constraint |
+| [health](resources.html#health) | `/resources/health` | Controller health status |
+| [capabilities](resources.html#capabilities) | `/resources/capabilities` | Enabled features |
 
-See [Resources Reference](resources/) for details.
+See [Resources Reference](resources.html) for details.
 
 ---
 
@@ -225,6 +225,6 @@ Here's how an AI agent might use the MCP tools:
 
 ## What's Next
 
-- [Tools Reference](tools/) - Detailed tool documentation
-- [Resources Reference](resources/) - Resource endpoint documentation
-- [Agent Integration](agent-integration/) - Connect AI assistants
+- [Tools Reference](tools.html) - Detailed tool documentation
+- [Resources Reference](resources.html) - Resource endpoint documentation
+- [Agent Integration](agent-integration.html) - Connect AI assistants

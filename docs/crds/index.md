@@ -18,9 +18,9 @@ Potoo uses three CRDs to store and configure constraint data.
 
 | CRD | Scope | Purpose |
 |-----|-------|---------|
-| [ConstraintReport](constraintreport/) | Namespaced | Stores discovered constraints per namespace |
-| [ConstraintProfile](constraintprofile/) | Cluster | Configures how CRDs are parsed |
-| [NotificationPolicy](notificationpolicy/) | Cluster | Controls privacy and notification channels |
+| [ConstraintReport](constraintreport.html) | Namespaced | Stores discovered constraints per namespace |
+| [ConstraintProfile](constraintprofile.html) | Cluster | Configures how CRDs are parsed |
+| [NotificationPolicy](notificationpolicy.html) | Cluster | Controls privacy and notification channels |
 
 ---
 
@@ -140,6 +140,6 @@ Full resource names:
 
 ## What's Next
 
-- [ConstraintReport](constraintreport/) - Per-namespace constraint data
-- [ConstraintProfile](constraintprofile/) - Register custom policy CRDs
-- [NotificationPolicy](notificationpolicy/) - Privacy and channel configuration
+- [ConstraintReport](constraintreport.html) - Per-namespace constraint data
+- [ConstraintProfile](constraintprofile.html) - Register custom policy CRDs
+- [NotificationPolicy](notificationpolicy.html) - Privacy and channel configuration

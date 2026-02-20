@@ -261,5 +261,5 @@ The explain command matches these patterns:
 
 ## See Also
 
-- [query](../query/) - List all constraints in a namespace
-- [remediate](../remediate/) - Get detailed remediation for a specific constraint
+- [query](query.html) - List all constraints in a namespace
+- [remediate](remediate.html) - Get detailed remediation for a specific constraint

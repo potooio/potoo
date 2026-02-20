@@ -210,7 +210,7 @@ Supports AuthorizationPolicy, PeerAuthentication, and Sidecar resources.
 Requires Istio v1 API (Istio 1.18+).
 
 {: .note }
-**CRDs-only mode:** The Istio adapter does not require istiod or the Istio control plane. It parses Istio CRD objects directly via `unstructured.Unstructured`, so it works in clusters where Istio CRDs are applied without a running control plane (e.g., GitOps pre-staging, CRD-only testing). The [missing resource detection](/docs/controller/missing-resources/#istio-mtls) rule separately checks for PeerAuthentication when `istio-injection=enabled` is set.
+**CRDs-only mode:** The Istio adapter does not require istiod or the Istio control plane. It parses Istio CRD objects directly via `unstructured.Unstructured`, so it works in clusters where Istio CRDs are applied without a running control plane (e.g., GitOps pre-staging, CRD-only testing). The [missing resource detection](/docs/controller/missing-resources.html#istio-mtls) rule separately checks for PeerAuthentication when `istio-injection=enabled` is set.
 
 **Watched Resources:**
 - `security.istio.io/v1/authorizationpolicies`

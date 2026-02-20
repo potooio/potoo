@@ -291,5 +291,5 @@ Error: constraint "nonexistent-constraint" not found in namespace "my-namespace"
 
 ## See Also
 
-- [explain](../explain/) - Get remediation for matching constraints from an error
-- [query](../query/) - List all constraints to find constraint names
+- [explain](explain.html) - Get remediation for matching constraints from an error
+- [query](query.html) - List all constraints to find constraint names

@@ -27,7 +27,7 @@ chmod +x potoo
 sudo mv potoo /usr/local/bin/
 ```
 
-See the [Installation Guide](/docs/getting-started/installation/#cli-installation) for macOS, Windows, and other platforms.
+See the [Installation Guide](/docs/getting-started/installation.html#cli-installation) for macOS, Windows, and other platforms.
 
 ### Using Go
 
@@ -59,11 +59,11 @@ potoo --help
 
 | Command | Purpose |
 |---------|---------|
-| [query](query/) | Query constraints affecting a namespace |
-| [explain](explain/) | Match an error message to constraints |
-| [check](check/) | Pre-check a manifest before deploying |
-| [remediate](remediate/) | Get remediation steps for a constraint |
-| [status](status/) | Show cluster-wide constraint summary |
+| [query](query.html) | Query constraints affecting a namespace |
+| [explain](explain.html) | Match an error message to constraints |
+| [check](check.html) | Pre-check a manifest before deploying |
+| [remediate](remediate.html) | Get remediation steps for a constraint |
+| [status](status.html) | Show cluster-wide constraint summary |
 
 ---
 

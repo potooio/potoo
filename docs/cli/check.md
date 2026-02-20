@@ -322,5 +322,5 @@ Note: The exit code does not indicate whether the manifest would be blocked. Use
 
 ## See Also
 
-- [query](../query/) - List all constraints
-- [explain](../explain/) - Explain errors after deployment fails
+- [query](query.html) - List all constraints
+- [explain](explain.html) - Explain errors after deployment fails

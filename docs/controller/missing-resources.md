@@ -123,7 +123,7 @@ The `potoo_check` tool returns missing resources in the `missing_prerequisites` 
 }
 ```
 
-See [MCP Tools Reference](/docs/mcp/tools/) for the full response schema.
+See [MCP Tools Reference](/docs/mcp/tools.html) for the full response schema.
 
 ### ConstraintReport
 
@@ -144,7 +144,7 @@ machineReadable:
         steps: [...]
 ```
 
-See [ConstraintReport CRD](/docs/crds/constraintreport/) for the full schema.
+See [ConstraintReport CRD](/docs/crds/constraintreport.html) for the full schema.
 
 ---
 
@@ -176,7 +176,7 @@ requirements:
   debounceSeconds: 120
 ```
 
-See [Configuration Reference](/docs/controller/configuration/) for the full Helm values.
+See [Configuration Reference](/docs/controller/configuration.html) for the full Helm values.
 
 ### crd-installed
 

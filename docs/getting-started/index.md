@@ -92,5 +92,5 @@ Potoo serves different audiences with different information:
 
 ## What's Next
 
-1. [Installation](installation/) - Install Potoo with Helm
-2. [Quickstart](quickstart/) - 5-minute hands-on tutorial
+1. [Installation](installation.html) - Install Potoo with Helm
+2. [Quickstart](quickstart.html) - 5-minute hands-on tutorial

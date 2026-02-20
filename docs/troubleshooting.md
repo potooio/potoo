@@ -61,7 +61,7 @@ Look for the adapter in the `adapters` array. If `enabled: false` with a `reason
 kubectl get constraintprofiles
 ```
 
-If your CRD isn't covered by a built-in adapter, you need a ConstraintProfile to register it. See the [ConstraintProfile CRD reference](/docs/crds/constraintprofile/).
+If your CRD isn't covered by a built-in adapter, you need a ConstraintProfile to register it. See the [ConstraintProfile CRD reference](/docs/crds/constraintprofile.html).
 
 ### Common Causes
 

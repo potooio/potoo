@@ -465,7 +465,7 @@ spec:
 
 ## Privacy Model Reference
 
-See [Privacy Model](/docs/reference/privacy/) for the complete privacy classification:
+See [Privacy Model](/docs/controller/notifications.html#privacy-and-detail-levels) for the complete privacy classification:
 
 | Classification | Developers | Platform Admins |
 |----------------|------------|-----------------|

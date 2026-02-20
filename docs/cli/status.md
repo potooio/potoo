@@ -253,5 +253,5 @@ If you only have namespace-scoped access, the command will only show namespaces 
 
 ## See Also
 
-- [query](../query/) - Drill into a specific namespace
+- [query](query.html) - Drill into a specific namespace
 - [Controller Status](/docs/controller/) - Controller health and metrics

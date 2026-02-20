@@ -247,7 +247,7 @@ Detects missing resources like:
 - PeerAuthentication for namespaces with Istio injection
 - ClusterIssuer/Issuer referenced by cert-manager annotations
 
-See [Missing Resource Detection](missing-resources/) for the full list of detection rules and how they work.
+See [Missing Resource Detection](missing-resources.html) for the full list of detection rules and how they work.
 
 ---
 
@@ -322,7 +322,7 @@ privacy:
 | `detailed` | + port numbers, effect details |
 | `full` | + cross-namespace policy names, full details |
 
-See [Privacy Model](/docs/reference/privacy/) for detailed information.
+See [Privacy Model](/docs/controller/notifications.html#privacy-and-detail-levels) for detailed information.
 
 ---
 

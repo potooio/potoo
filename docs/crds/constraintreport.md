@@ -264,7 +264,7 @@ machineReadable:
 | `forWorkload` | WorkloadReference | Which workload needs it |
 | `remediation` | RemediationInfo | How to create it |
 
-See [Missing Resource Detection](/docs/controller/missing-resources/) for the full list of built-in detection rules.
+See [Missing Resource Detection](/docs/controller/missing-resources.html) for the full list of built-in detection rules.
 
 ---
 
